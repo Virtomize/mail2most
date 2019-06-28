@@ -10,7 +10,8 @@ Features:
 - Filter by Folder
 - Filter by From
 - Filter by To
-- Filter by Subject contains
+- Filter by Subject
+- Filter by TimeRange
 
 Todo:
 - tests

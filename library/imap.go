@@ -71,7 +71,7 @@ func (m Mail2Most) GetMail(profile int) ([]Mail, error) {
 		}
 
 		log.Println("processing mails in", folder)
-		messages := make(chan *imap.Message)
+		messages := make(chan *imap.Message, 100)
 		done := make(chan error, 1)
 		go func() {
 			done <- c.Fetch(seqset, []imap.FetchItem{imap.FetchEnvelope, "BODY[]"}, messages)
@@ -93,9 +93,14 @@ func (m Mail2Most) GetMail(profile int) ([]Mail, error) {
 				To:      msg.Envelope.To,
 				Subject: msg.Envelope.Subject,
 				Body:    strings.TrimSuffix(buf.String(), "\n"),
+				Date:    msg.Envelope.Date,
 			}
 
-			if m.checkFilters(profile, mail) {
+			test, err := m.checkFilters(profile, mail)
+			if err != nil {
+				return []Mail{}, err
+			}
+			if test {
 				log.Println("found mail", msg.Envelope.Subject)
 				mails = append(mails, mail)
 			}

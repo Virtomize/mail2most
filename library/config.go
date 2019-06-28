@@ -24,6 +24,7 @@ type maildata struct {
 type filter struct {
 	Folders, From, To, Subject []string
 	Unseen                     bool
+	TimeRange                  string
 }
 
 type mattermost struct {

@@ -1,6 +1,10 @@
 package mail2most
 
-import imap "github.com/emersion/go-imap"
+import (
+	"time"
+
+	imap "github.com/emersion/go-imap"
+)
 
 // Mail2Most implements the basic interface
 type Mail2Most struct {
@@ -12,4 +16,5 @@ type Mail struct {
 	ID            uint32
 	Subject, Body string
 	From, To      []*imap.Address
+	Date          time.Time
 }
