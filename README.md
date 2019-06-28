@@ -1,3 +1,14 @@
 # Mail2Most
 
-is a simple email imap client checking an email folder and sending the mail content to mattermost
+Filter emails from mail accounts and send them to mattermost.
+
+Features:
+- Imap
+- Mattermost v4
+- Filter by Folder
+
+Todo:
+- Filter by From
+- Filter by To
+- Filter by Subject contains
+- tests
