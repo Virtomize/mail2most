@@ -18,11 +18,12 @@ type profile struct {
 
 type maildata struct {
 	ImapServer, Username, Password string
+	ReadOnly                       bool
 }
 
 type filter struct {
-	Folders []string
-	Unseen  bool
+	Folders, From, To, Subject []string
+	Unseen                     bool
 }
 
 type mattermost struct {

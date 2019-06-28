@@ -1,6 +1,7 @@
 package mail2most
 
 import (
+	"encoding/base64"
 	"fmt"
 	"strings"
 
@@ -36,13 +37,22 @@ func (m Mail2Most) PostMattermost(profile int, mail Mail) error {
 			return resp.Error
 		}
 
+		// check if body is base64 encoded
+		var body string
+		bb, err := base64.StdEncoding.DecodeString(mail.Body)
+		if err != nil {
+			body = mail.Body
+		} else {
+			body = string(bb)
+		}
+
 		msg := fmt.Sprintf(
 			":email: _From: **<%s> %s@%s**_\n>_%s_\n\n```\n%s```\n",
 			mail.From[0].PersonalName,
 			mail.From[0].MailboxName,
 			mail.From[0].HostName,
 			mail.Subject,
-			mail.Body,
+			body,
 		)
 
 		post := &model.Post{ChannelId: ch.Id, Message: msg}

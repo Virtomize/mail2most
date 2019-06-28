@@ -51,6 +51,7 @@ func main() {
 				send := true
 				for _, id := range alreadySend[p] {
 					if mail.ID == id {
+						log.Println("already send", mail.Subject)
 						send = false
 					}
 				}

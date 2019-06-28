@@ -24,7 +24,7 @@ func (m Mail2Most) connect(profile int) (*client.Client, error) {
 	return c, nil
 }
 
-// GetMail checks emails
+// GetMail returns emails filter by profile id
 func (m Mail2Most) GetMail(profile int) ([]Mail, error) {
 
 	// Connect to server
@@ -43,7 +43,7 @@ func (m Mail2Most) GetMail(profile int) ([]Mail, error) {
 	var mails []Mail
 
 	for _, folder := range folders {
-		mbox, err := c.Select(folder, false)
+		mbox, err := c.Select(folder, m.Config.Profiles[profile].Mail.ReadOnly)
 		if err != nil {
 			return []Mail{}, err
 		}
@@ -53,6 +53,10 @@ func (m Mail2Most) GetMail(profile int) ([]Mail, error) {
 			criteria := imap.NewSearchCriteria()
 			criteria.WithoutFlags = []string{imap.SeenFlag}
 			ids, err := c.Search(criteria)
+			if len(ids) == 0 {
+				continue
+			}
+			log.Println("found unseen mail ids", ids)
 			if err != nil {
 				return []Mail{}, err
 			}
@@ -66,29 +70,35 @@ func (m Mail2Most) GetMail(profile int) ([]Mail, error) {
 			continue
 		}
 
-		log.Println("found unseen mails in ", folder)
+		log.Println("processing mails in", folder)
 		messages := make(chan *imap.Message)
 		done := make(chan error, 1)
 		go func() {
-			done <- c.UidFetch(seqset, []imap.FetchItem{imap.FetchEnvelope, "BODY[]"}, messages)
+			done <- c.Fetch(seqset, []imap.FetchItem{imap.FetchEnvelope, "BODY[]"}, messages)
 		}()
 
 		for msg := range messages {
-			log.Println(msg.Envelope.Subject)
 			r := msg.GetBody(&imap.BodySectionName{})
 			body, err := mail.ReadMessage(r)
 			if err != nil {
 				return []Mail{}, err
 			}
+
 			buf := new(bytes.Buffer)
 			buf.ReadFrom(body.Body)
-			mails = append(mails, Mail{
-				ID:      msg.Uid,
+
+			mail := Mail{
+				ID:      msg.SeqNum,
 				From:    msg.Envelope.From,
 				To:      msg.Envelope.To,
 				Subject: msg.Envelope.Subject,
 				Body:    strings.TrimSuffix(buf.String(), "\n"),
-			})
+			}
+
+			if m.checkFilters(profile, mail) {
+				log.Println("found mail", msg.Envelope.Subject)
+				mails = append(mails, mail)
+			}
 		}
 
 		if err := <-done; err != nil {
