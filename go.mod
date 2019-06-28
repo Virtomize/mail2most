@@ -7,6 +7,7 @@ require (
 	github.com/emersion/go-imap v1.0.0-rc.2
 	github.com/emersion/go-message v0.10.4-0.20190609165112-592ace5bc1ca
 	github.com/go-ldap/ldap v3.0.3+incompatible // indirect
+	github.com/magefile/mage v1.8.0
 	github.com/mattermost/mattermost-server v0.0.0-20190626111855-f21a8a370f89
 	go.uber.org/atomic v1.4.0 // indirect
 	go.uber.org/zap v1.10.0 // indirect
