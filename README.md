@@ -1,4 +1,4 @@
-![Built with Mage](https://magefile.org/badge.svg)](https://magefile.org)
+[![Built with Mage](https://magefile.org/badge.svg)](https://magefile.org)
 
 # Mail2Most
 
