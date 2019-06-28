@@ -12,8 +12,8 @@ type config struct {
 
 type profile struct {
 	Mail       maildata
-	Filter     filter
 	Mattermost mattermost
+	Filter     filter
 }
 
 type maildata struct {
