@@ -3,7 +3,7 @@
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/cseeger-epages/mail2most/blob/master/LICENSE)
 [![Built with Mage](https://magefile.org/badge.svg)](https://magefile.org)
 
-# Mail2Most
+![Mail2Most](https://github.com/cseeger-epages/mail2most/blob/master/logo.png)
 
 Filter emails from mail accounts and send them to mattermost.
 
