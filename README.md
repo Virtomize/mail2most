@@ -43,10 +43,10 @@ see [example configuration](https://github.com/cseeger-epages/mail2most/blob/mas
 
 # Systemd example configuration
 
-create `/opt/mail2most` and place the mail2most binary into it.
-create `/opt/mail2most/conf/mail2most.conf`
-
-place the following file to `/etc/systemd/system/mail2most.service`
+- create `/opt/mail2most` and place the mail2most binary into it
+  - `mkdir -p /opt/mail2most/conf`
+- create `/opt/mail2most/conf/mail2most.conf`
+- place the following file to `/etc/systemd/system/mail2most.service`
 
 ```
 # mail2most
