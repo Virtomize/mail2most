@@ -1,4 +1,4 @@
-[![GoDoc](https://img.shields.io/badge/godoc-reference-green.svg)](https://godoc.org/github.com/cseeger-epages/mail2most)
+[![GoDoc](https://img.shields.io/badge/godoc-reference-green.svg)](https://godoc.org/github.com/cseeger-epages/mail2most/lib)
 [![Go Report Card](https://goreportcard.com/badge/github.com/cseeger-epages/mail2most)](https://goreportcard.com/report/github.com/cseeger-epages/mail2most)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/cseeger-epages/mail2most/blob/master/LICENSE)
 [![Built with Mage](https://magefile.org/badge.svg)](https://magefile.org)
@@ -7,7 +7,8 @@
 
 Filter emails from mail accounts and send them to mattermost.
 
-Features:
+# Features
+
 - Imap
 - Mattermost v4
 - Filter by Folder
@@ -16,7 +17,7 @@ Features:
 - Filter by Subject
 - Filter by TimeRange
 
-Todo:
+# Todo
 - tests
 
 # Install
