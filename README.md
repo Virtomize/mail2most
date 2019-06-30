@@ -21,12 +21,12 @@ Filter emails from mail accounts and send them to mattermost.
 
 ## build it yourself
 
-you can compile the project yourself using this repo and [mage](https://magefile.org).
+You can compile the project yourself using this repo and [mage](https://magefile.org).
 Just clone the repo and run `mage build`, you can find the binary under `bin/mail2most`
 
-## download latest
+## download
 
-TBD
+Download [Latest Release Version](https://github.com/cseeger-epages/mail2most/releases/latest)
 
 # Usage
 
