@@ -69,3 +69,13 @@ enable and start using
 systemctl enable mail2most
 systemctl start mail2most
 ```
+
+# release creation
+
+To create release versions:
+
+```
+mage createrelease
+```
+
+will create releases for 386, amd64, arm and arm64 for linux and 386 and amd64 for windows.
