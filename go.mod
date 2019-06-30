@@ -9,6 +9,7 @@ require (
 	github.com/go-ldap/ldap v3.0.3+incompatible // indirect
 	github.com/magefile/mage v1.8.0
 	github.com/mattermost/mattermost-server v0.0.0-20190626111855-f21a8a370f89
+	github.com/sirupsen/logrus v1.4.0
 	go.uber.org/atomic v1.4.0 // indirect
 	go.uber.org/zap v1.10.0 // indirect
 	golang.org/x/crypto v0.0.0-20190621222207-cc06ce4a13d4 // indirect

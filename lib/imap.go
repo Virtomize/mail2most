@@ -2,7 +2,6 @@ package mail2most
 
 import (
 	"bytes"
-	"log"
 	"net/mail"
 	"strings"
 
@@ -20,6 +19,10 @@ func (m Mail2Most) connect(profile int) (*client.Client, error) {
 	if err != nil {
 		return nil, err
 	}
+	m.Debug("mailserver", map[string]interface{}{
+		"status": "connected",
+		"server": m.Config.Profiles[profile].Mail.ImapServer,
+	})
 
 	return c, nil
 }
@@ -39,6 +42,9 @@ func (m Mail2Most) GetMail(profile int) ([]Mail, error) {
 	if len(m.Config.Profiles[profile].Filter.Folders) > 0 {
 		folders = m.Config.Profiles[profile].Filter.Folders
 	}
+	m.Debug("checking folders", map[string]interface{}{
+		"folders": folders,
+	})
 
 	var mails []Mail
 
@@ -56,7 +62,7 @@ func (m Mail2Most) GetMail(profile int) ([]Mail, error) {
 			if len(ids) == 0 {
 				continue
 			}
-			log.Println("found unseen mail ids", ids)
+			m.Info("unseen mails", map[string]interface{}{"ids": ids})
 			if err != nil {
 				return []Mail{}, err
 			}
@@ -70,7 +76,9 @@ func (m Mail2Most) GetMail(profile int) ([]Mail, error) {
 			continue
 		}
 
-		log.Println("processing mails in", folder)
+		m.Info("processing mails", map[string]interface{}{
+			"folder": folder,
+		})
 		messages := make(chan *imap.Message, 100)
 		done := make(chan error, 1)
 		go func() {
@@ -101,7 +109,9 @@ func (m Mail2Most) GetMail(profile int) ([]Mail, error) {
 				return []Mail{}, err
 			}
 			if test {
-				log.Println("found mail", msg.Envelope.Subject)
+				m.Info("found mail", map[string]interface{}{
+					"subject": msg.Envelope.Subject,
+				})
 				mails = append(mails, mail)
 			}
 		}

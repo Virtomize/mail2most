@@ -4,11 +4,13 @@ import (
 	"time"
 
 	imap "github.com/emersion/go-imap"
+	log "github.com/sirupsen/logrus"
 )
 
 // Mail2Most implements the basic interface
 type Mail2Most struct {
 	Config config
+	Logger *log.Logger
 }
 
 // Mail contains mail information

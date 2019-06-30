@@ -7,7 +7,19 @@ import (
 )
 
 type config struct {
+	General  general
+	Logging  logging
 	Profiles []profile `toml:"Profile"`
+}
+type general struct {
+	File string
+}
+
+type logging struct {
+	Loglevel string
+	Logtype  string
+	Logfile  string
+	Output   string
 }
 
 type profile struct {

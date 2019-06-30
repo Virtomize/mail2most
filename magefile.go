@@ -33,6 +33,11 @@ func Test() error {
 	return sh.RunV("go", "test", "-v", "-cover", "./...", "-coverprofile=coverage.out")
 }
 
+// Run - mage run
+func Run() error {
+	return sh.RunV("go", "run", "main.go")
+}
+
 // Coverage - checking code coverage
 func Coverage() error {
 	if _, err := os.Stat("./coverage.out"); err != nil {

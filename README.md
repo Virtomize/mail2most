@@ -15,7 +15,6 @@ Features:
 
 Todo:
 - tests
-- improve logging
 
 # example conf
 

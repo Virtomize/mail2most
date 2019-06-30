@@ -1,7 +1,9 @@
 package mail2most
 
 import (
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"strings"
 	"time"
 )
@@ -13,7 +15,13 @@ func New(confPath string) (Mail2Most, error) {
 	if err != nil {
 		return Mail2Most{}, err
 	}
-	return Mail2Most{Config: conf}, nil
+	m := Mail2Most{Config: conf}
+	err = m.initLogger()
+	if err != nil {
+		return Mail2Most{}, err
+	}
+
+	return m, nil
 }
 
 func (m Mail2Most) containsFrom(profile int, mail Mail) bool {
@@ -87,4 +95,16 @@ func (m Mail2Most) checkFilters(profile int, mail Mail) (bool, error) {
 	}
 	return false, nil
 
+}
+
+func writeToFile(data [][]uint32, filename string) error {
+	file, err := json.MarshalIndent(data, "", " ")
+	if err != nil {
+		return err
+	}
+	err = ioutil.WriteFile(filename, file, 0644)
+	if err != nil {
+		return err
+	}
+	return nil
 }
