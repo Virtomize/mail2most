@@ -9,16 +9,13 @@ Filter emails from mail accounts and send them to mattermost.
 
 # Features
 
-- Imap
-- Mattermost v4
-- Filter by Folder
-- Filter by From
-- Filter by To
-- Filter by Subject
-- Filter by TimeRange
-
-# Todo
-- tests
+- IMAP support
+- Mattermost v4 API support
+- Filter mails by Folder
+- Filter mails by From
+- Filter mails by To
+- Filter mails by Subject
+- Filter mails by TimeRange
 
 # Install
 
@@ -33,9 +30,11 @@ TBD
 
 # Usage
 
-- create a user in mattermost
-- create or use an existsing email user to connect to your mail server
-- edit `conf/mail2most.conf`
+- create a mattermost user 
+- create or use an existsing email user to connect to your mail server via IMAP
+- edit `conf/mail2most.conf` and configure your mail and mattermost credentials
+- configure your filters
+- run Mail2Most `./mail2most` or with config path `./mail2most -c conf/mail2most.conf`
 
 ## example conf filter description
 
