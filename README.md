@@ -16,7 +16,24 @@ Features:
 Todo:
 - tests
 
-# example conf
+# Install
+
+## build it yourself
+
+you can compile the project yourself using this repo and [mage](https://magefile.org).
+Just clone the repo and run `mage build`, you can find the binary under `bin/mail2most`
+
+## download latest
+
+TBD
+
+# Usage
+
+- create a user in mattermost
+- create or use an existsing email user to connect to your mail server
+- edit `conf/mail2most.conf`
+
+## example conf filter description
 
 see [example configuration](https://github.com/cseeger-epages/mail2most/blob/master/conf/mail2most.conf)
 
