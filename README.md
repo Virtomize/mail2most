@@ -17,6 +17,8 @@ Filter emails from mail accounts and send them to mattermost.
 - Filter mails by Subject
 - Filter mails by TimeRange
 
+Missing feature or found a bug ? Feel free to open an issue and let us know !
+
 # Install
 
 ## build it yourself
