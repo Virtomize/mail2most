@@ -2,6 +2,7 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/cseeger-epages/mail2most)](https://goreportcard.com/report/github.com/cseeger-epages/mail2most)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/cseeger-epages/mail2most/blob/master/LICENSE)
 [![Built with Mage](https://magefile.org/badge.svg)](https://magefile.org)
+[![Build Status](https://api.travis-ci.org/cseeger-epages/mail2most.svg?branch=master)](https://travis-ci.org/cseeger-epages/mail2most)
 
 ![Mail2Most](https://github.com/cseeger-epages/mail2most/blob/master/logo.png)
 
