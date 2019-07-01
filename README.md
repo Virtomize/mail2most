@@ -8,6 +8,8 @@
 
 Filter emails from mail accounts and send them to mattermost.
 
+![mail2most-image](https://user-images.githubusercontent.com/13348918/60437141-ff1b5500-9c0d-11e9-913f-ae7c4a034b10.png)
+
 # Features
 
 - IMAP support
