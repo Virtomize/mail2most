@@ -17,6 +17,7 @@ Filter emails from mail accounts and send them to mattermost.
 - Filter mails by To
 - Filter mails by Subject
 - Filter mails by TimeRange
+- Choose to post Subject and Body or Subject only
 
 Missing feature or found a bug ? Feel free to open an [issue](https://github.com/cseeger-epages/mail2most/issues) and let us know !
 
