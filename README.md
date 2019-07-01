@@ -4,7 +4,7 @@
 [![Built with Mage](https://magefile.org/badge.svg)](https://magefile.org)
 [![Build Status](https://api.travis-ci.org/cseeger-epages/mail2most.svg?branch=master)](https://travis-ci.org/cseeger-epages/mail2most)
 
-![Mail2Most](https://github.com/cseeger-epages/mail2most/blob/master/logo.png)
+# [![Mail2Most](https://user-images.githubusercontent.com/13348918/60418882-560c3480-9be4-11e9-9f30-b0124a162630.png)](https://github.com/cseeger-epages/mail2most)
 
 Filter emails from mail accounts and send them to mattermost.
 
