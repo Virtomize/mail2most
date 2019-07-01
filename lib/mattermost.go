@@ -54,6 +54,15 @@ func (m Mail2Most) PostMattermost(profile int, mail Mail) error {
 			mail.Subject,
 			body,
 		)
+		if m.Config.Profiles[profile].Mattermost.SubjectOnly {
+			msg = fmt.Sprintf(
+				":email: _From: **<%s> %s@%s**_\n>_%s_\n\n",
+				mail.From[0].PersonalName,
+				mail.From[0].MailboxName,
+				mail.From[0].HostName,
+				mail.Subject,
+			)
+		}
 
 		post := &model.Post{ChannelId: ch.Id, Message: msg}
 		_, resp = c.CreatePost(post)

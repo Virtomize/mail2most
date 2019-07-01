@@ -42,6 +42,7 @@ type filter struct {
 type mattermost struct {
 	URL, Team, Username, Password string
 	Channels                      []string
+	SubjectOnly                   bool
 }
 
 func parseConfig(fileName string, conf *config) error {
