@@ -76,6 +76,10 @@ systemctl enable mail2most
 systemctl start mail2most
 ```
 
+# Contribution to Mail2Most
+
+See our [Contribution Guidlines](https://github.com/cseeger-epages/mail2most/blob/master/CONTRIBUTING.md) for more information.
+
 # release creation
 
 To create release versions:
