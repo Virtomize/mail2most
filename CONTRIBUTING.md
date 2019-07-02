@@ -27,11 +27,12 @@ Just open a [regular issue](https://github.com/cseeger-epages/mail2most/issues/n
 
 ### Dependencies
 
-All test and build processes use [Mage](https://magefile.org/) which is a replacement for the classical make.
+This project uses [Mage](https://magefile.org/) which is a replacement for the classical make.
+Mage is used to manage test, build and create releases (`mage test`, `mage build`, `mage createrelease`, `mage clean`)
 
 ### 1. Fork 
 
-For the project [on Github](https://github.com/cseeger-epages/mail2most/) and clone your fork
+Fork the project [on Github](https://github.com/cseeger-epages/mail2most/) and clone your fork
 
 ```
 $ git clone git@github.com:username/mail2most.git
@@ -88,7 +89,7 @@ A good commit message should contain a short description what changed and why
   - e.g.: `additional filter added to filter mails by whatever`
 - if you fix open issues, add a reference to the issue
   - e.g.: `issue-1337: fixed ...`
-- if you commit a breaking change (see [semantic versioning](https://semver.org/), the message should contain an explanation about the reason of the breaking change, what triggers the change and what the exact change is
+- if you commit a breaking change (see [semantic versioning](https://semver.org/)), the message should contain an explanation about the reason of the breaking change, what triggers the change and what the exact change is
 
 ### 5. Rebase
 
@@ -133,11 +134,11 @@ Contributors guide: https://github.com/cseeger-epages/mail2most/blob/master/CONT
 
 Please fill out all details, feel free to skip not nessesary parts or if you're not sure what to fill in.
 
-Once opened, the Pull Request is finished and will be reviewed.
+Once opened, the Pull Request is opend and will be reviewed.
 
 ### 8. Updates and discussion
 
-While reviewing you will probably get some feedback or requests for cahnges to your Pull Request. This is normal and a necessary part of the process to evaluate the changes and there correctness. 
+While reviewing you will probably get some feedback or requests for changes to your Pull Request. This is normal and a necessary part of the process to evaluate the changes and there correctness. 
 
 To make changes to an existsing Pull Request, make the changes to your local branch.
 Add a new commit including those changes and push them to your fork.
@@ -180,7 +181,7 @@ Be aware that **how** you communicate requests and reviews in your feedback can 
 Creating a release is done using [Mage](https://magefile.org):
 
 ```
-mage create release
+mage createrelease
 ```
 
 Releases are created for the following OS/Arch combinations:
@@ -196,3 +197,4 @@ Releases are created for the following OS/Arch combinations:
 
 and can be found inside thei `bin/` folder.
 All combinations are packed with the default conf `conf/mail2most.conf` inside a tar gziped archive to easily upload the release.
+They follow the naming convention `[os]-[arch].tar.gz`
