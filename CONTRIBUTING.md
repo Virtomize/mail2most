@@ -174,3 +174,25 @@ Even if a Pull Request is not accepted, the submitters should come away from the
 Every Pull Request from a new contributor is an opportunity to grow the community.
 
 Be aware that **how** you communicate requests and reviews in your feedback can have a significant impact on the success of the Pull Request.
+
+## Release creation process
+
+Creating a release is done using [Mage](https://magefile.org):
+
+```
+mage create release
+```
+
+Releases are created for the following OS/Arch combinations:
+
+- Linux
+  - 386
+  - amd64
+  - arm
+  - arm64
+- Windows
+  - 386
+  - amd64
+
+and can be found inside thei `bin/` folder.
+All combinations are packed with the default conf `conf/mail2most.conf` inside a tar gziped archive to easily upload the release.

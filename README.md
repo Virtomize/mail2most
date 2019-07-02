@@ -48,6 +48,8 @@ see [example configuration](https://github.com/cseeger-epages/mail2most/blob/mas
 
 # Systemd example configuration
 
+Systemd allows you to create a background service to run mail2most managed by your system:
+
 - create `/opt/mail2most` and place the mail2most binary into it
   - `mkdir -p /opt/mail2most/conf`
 - create `/opt/mail2most/conf/mail2most.conf`
@@ -78,14 +80,5 @@ systemctl start mail2most
 
 # Contribution to Mail2Most
 
-See our [Contribution Guidlines](https://github.com/cseeger-epages/mail2most/blob/master/CONTRIBUTING.md) for more information.
-
-# release creation
-
-To create release versions:
-
-```
-mage createrelease
-```
-
-will create releases for 386, amd64, arm and arm64 for linux and 386 and amd64 for windows.
+Thank you for participating to this project.
+Please see our [Contribution Guidlines](https://github.com/cseeger-epages/mail2most/blob/master/CONTRIBUTING.md) for more information.
