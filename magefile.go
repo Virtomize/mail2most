@@ -12,9 +12,12 @@ import (
 )
 
 var (
-	binPath  = "bin"
-	binName  = "mail2most"
-	confFile = "conf/mail2most.conf"
+	binPath        = "bin"
+	binName        = "mail2most"
+	confFile       = "conf/mail2most.conf"
+	dockerPath     = "docker"
+	dockerFilePath = "Dockerfile"
+	registry       = "virtomize/mail2most"
 )
 
 // Build - mage build
@@ -162,4 +165,42 @@ func copyFile(src, dst string, BUFFERSIZE int64) error {
 		}
 	}
 	return err
+}
+
+// Docker creates docker container
+func Docker() error {
+	if err := cleanDocker(); err != nil {
+		return err
+	}
+
+	if err := os.MkdirAll(dockerPath+"/conf", 0755); err != nil {
+		return err
+	}
+
+	if err := sh.RunWith(map[string]string{"CGO_ENABLED": "0"}, "go", "build", "-a", "-installsuffix", "cgo", "-o", "docker/mail2most", "main.go"); err != nil {
+		return err
+	}
+
+	if err := copyFile(dockerFilePath, dockerPath+"/Dockerfile", 1000); err != nil {
+		return err
+	}
+
+	copyFile(confFile, dockerPath+"/"+confFile, 1000)
+
+	if err := sh.RunV("docker", "build", "-t", registry+":latest", "docker"); err != nil {
+		return err
+	}
+
+	return sh.RunV("docker", "push", registry+":latest")
+	return nil
+}
+
+func cleanDocker() error {
+	if _, err := os.Stat(dockerPath); err == nil {
+		err = os.RemoveAll(dockerPath)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }

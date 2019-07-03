@@ -25,14 +25,14 @@ Missing feature or found a bug ? Feel free to open an [issue](https://github.com
 
 # Install
 
+## download
+
+Download [Latest Release Version](https://github.com/cseeger-epages/mail2most/releases/latest)
+
 ## build it yourself
 
 You can compile the project yourself using this repo and [mage](https://magefile.org).
 Just clone the repo and run `mage build`, you can find the binary under `bin/mail2most`
-
-## download
-
-Download [Latest Release Version](https://github.com/cseeger-epages/mail2most/releases/latest)
 
 # Usage
 
@@ -42,9 +42,9 @@ Download [Latest Release Version](https://github.com/cseeger-epages/mail2most/re
 - configure your filters
 - run Mail2Most `./mail2most` or with config path `./mail2most -c conf/mail2most.conf`
 
-## example conf filter description
+## example conf - filter descriptions
 
-see [example configuration](https://github.com/cseeger-epages/mail2most/blob/master/conf/mail2most.conf)
+see [example configuration](https://github.com/cseeger-epages/mail2most/blob/master/conf/mail2most.conf) for more details.
 
 # Systemd example configuration
 
