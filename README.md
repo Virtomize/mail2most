@@ -46,7 +46,50 @@ Just clone the repo and run `mage build`, you can find the binary under `bin/mai
 
 see [example configuration](https://github.com/cseeger-epages/mail2most/blob/master/conf/mail2most.conf) for more details.
 
-# Systemd example configuration
+# Run Mail2Most as a service
+
+You can run Mail2Most using docker, docker-compose or as a systemd service.
+
+## docker
+
+Using docker you need to change the path to your mail2most.conf
+
+```
+docker run \
+  -v /path/to/mail2most.conf:/mail2most/conf/mail2most.conf \
+  virtomize/mail2most:latest
+```
+e.g. if you are in this repo:
+
+
+```
+docker run \
+  -v $(pwd)/conf/mail2most.conf:/mail2most/conf/mail2most.conf \
+  virtomize/mail2most:latest
+```
+
+## docker-compose
+
+Using docker-compose you can just edit the `conf/mail2most.conf` or change the path inside the docker-compose.yml to your config:
+
+```
+    volumes:
+      - ./conf/mail2most.conf:/mail2most/conf/mail2most.conf
+```
+needs to be changed to 
+
+```
+    volumes:
+      - /path/to/my/mail2most.conf:/mail2most/conf/mail2most.conf
+```
+
+then just start a container user
+
+```
+docker-compose up -d
+```
+
+## Systemd
 
 Systemd allows you to create a background service to run mail2most managed by your system:
 
