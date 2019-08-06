@@ -40,8 +40,9 @@ func (m Mail2Most) Run() error {
 				for _, id := range alreadySend[p] {
 					if mail.ID == id {
 						m.Debug("mail", map[string]interface{}{
-							"subject": mail.Subject,
-							"status":  "already send",
+							"subject":    mail.Subject,
+							"status":     "already send",
+							"message-id": mail.ID,
 						})
 						send = false
 					}

@@ -83,7 +83,7 @@ func (m Mail2Most) GetMail(profile int) ([]Mail, error) {
 		messages := make(chan *imap.Message, 100)
 		done := make(chan error, 1)
 		go func() {
-			done <- c.Fetch(seqset, []imap.FetchItem{imap.FetchEnvelope, "BODY[]"}, messages)
+			done <- c.Fetch(seqset, []imap.FetchItem{imap.FetchEnvelope, "BODY[]", imap.FetchUid}, messages)
 		}()
 
 		for msg := range messages {
@@ -128,7 +128,7 @@ func (m Mail2Most) GetMail(profile int) ([]Mail, error) {
 			}
 
 			email := Mail{
-				ID:      msg.SeqNum,
+				ID:      msg.Uid,
 				From:    msg.Envelope.From,
 				To:      msg.Envelope.To,
 				Subject: msg.Envelope.Subject,
@@ -143,7 +143,7 @@ func (m Mail2Most) GetMail(profile int) ([]Mail, error) {
 
 			if test {
 				m.Info("found mail", map[string]interface{}{
-					"subject": msg.Envelope.Subject,
+					"subject": msg.Envelope.Subject, "message-id": email.ID,
 				})
 				mails = append(mails, email)
 			}
