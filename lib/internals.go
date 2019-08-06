@@ -118,6 +118,9 @@ func writeToFile(data [][]uint32, filename string) error {
 // else it will return an error if something goes very wrong
 // if the charset is not convertable it just returns nil, nil
 func (m Mail2Most) read(r io.Reader) (*gomail.Reader, error) {
+	if r == nil {
+		return nil, fmt.Errorf("nil reader")
+	}
 	// fix charset errors
 	var charSetError bool
 	e, err := gomessage.Read(r)
@@ -152,6 +155,9 @@ func (m Mail2Most) read(r io.Reader) (*gomail.Reader, error) {
 
 // processReader processes a mail.Reader and returns the body or an error
 func (m Mail2Most) processReader(mr *gomail.Reader) (string, error) {
+	if mr == nil {
+		return "", fmt.Errorf("nil reader")
+	}
 	var body string
 	// Process each message's part
 	for {

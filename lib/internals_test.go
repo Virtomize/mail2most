@@ -1,7 +1,9 @@
 package mail2most
 
 import (
+	"fmt"
 	"os"
+	"strings"
 	"testing"
 	"time"
 
@@ -146,4 +148,25 @@ func TestWriteToFile(t *testing.T) {
 	if err != nil {
 		assert.Equal(t, err.Error(), "open /tmp/doesnotexists/delete.me: no such file or directory")
 	}
+}
+
+func TestRead(t *testing.T) {
+	m2m, err := New("../conf/mail2most.conf")
+	assert.Nil(t, err)
+
+	mr, err := m2m.read(nil)
+	assert.Equal(t, err, fmt.Errorf("nil reader"))
+
+	mr, err = m2m.read(strings.NewReader(strings.ReplaceAll(testMailString, "windows-1252", "asdf")))
+	assert.Nil(t, err)
+
+	mr, err = m2m.read(strings.NewReader(testMailString))
+	assert.Nil(t, err)
+
+	_, err = m2m.processReader(nil)
+	assert.Equal(t, err, fmt.Errorf("nil reader"))
+
+	b, err := m2m.processReader(mr)
+	assert.Nil(t, err)
+	assert.Equal(t, b, "<div>What's <i>your</i> name?</div>")
 }
