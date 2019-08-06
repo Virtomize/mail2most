@@ -1,12 +1,13 @@
 package mail2most
 
 import (
-	"bytes"
-	"net/mail"
+	"io"
+	"io/ioutil"
 	"strings"
 
 	imap "github.com/emersion/go-imap"
 	"github.com/emersion/go-imap/client"
+	gomail "github.com/emersion/go-message/mail"
 )
 
 func (m Mail2Most) connect(profile int) (*client.Client, error) {
@@ -87,32 +88,64 @@ func (m Mail2Most) GetMail(profile int) ([]Mail, error) {
 
 		for msg := range messages {
 			r := msg.GetBody(&imap.BodySectionName{})
-			body, err := mail.ReadMessage(r)
+
+			// https://github.com/emersion/go-imap/wiki/Fetching-messages
+			mr, err := gomail.CreateReader(r)
 			if err != nil {
 				return []Mail{}, err
 			}
 
-			buf := new(bytes.Buffer)
-			buf.ReadFrom(body.Body)
+			var body string
+			// Process each message's part
+			for {
+				p, err := mr.NextPart()
+				if err == io.EOF {
+					break
+				} else if err != nil {
+					if err != nil {
+						return []Mail{}, err
+					}
+				}
 
-			mail := Mail{
+				switch h := p.Header.(type) {
+				case *gomail.InlineHeader:
+					// This is the message's text (can be plain-text or HTML)
+					b, err := ioutil.ReadAll(p.Body)
+					if err != nil {
+						return []Mail{}, err
+					}
+					body = string(b)
+				case *gomail.AttachmentHeader:
+					// This is an attachment
+					filename, err := h.Filename()
+					if err != nil {
+						return []Mail{}, err
+					}
+					if filename != "" {
+						m.Debug("attachments found", map[string]interface{}{"filename": filename})
+					}
+				}
+			}
+
+			email := Mail{
 				ID:      msg.SeqNum,
 				From:    msg.Envelope.From,
 				To:      msg.Envelope.To,
 				Subject: msg.Envelope.Subject,
-				Body:    strings.TrimSuffix(buf.String(), "\n"),
+				Body:    strings.TrimSuffix(body, "\n"),
 				Date:    msg.Envelope.Date,
 			}
 
-			test, err := m.checkFilters(profile, mail)
+			test, err := m.checkFilters(profile, email)
 			if err != nil {
 				return []Mail{}, err
 			}
+
 			if test {
 				m.Info("found mail", map[string]interface{}{
 					"subject": msg.Envelope.Subject,
 				})
-				mails = append(mails, mail)
+				mails = append(mails, email)
 			}
 		}
 
