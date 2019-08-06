@@ -1,15 +1,10 @@
 package mail2most
 
 import (
-	"io"
-	"io/ioutil"
 	"strings"
 
 	imap "github.com/emersion/go-imap"
 	"github.com/emersion/go-imap/client"
-	gomessage "github.com/emersion/go-message"
-	"github.com/emersion/go-message/charset"
-	gomail "github.com/emersion/go-message/mail"
 )
 
 func (m Mail2Most) connect(profile int) (*client.Client, error) {
@@ -91,66 +86,20 @@ func (m Mail2Most) GetMail(profile int) ([]Mail, error) {
 		for msg := range messages {
 			r := msg.GetBody(&imap.BodySectionName{})
 
-			// https://github.com/emersion/go-imap/wiki/Fetching-messages
-			var charSetError bool
-			e, err := gomessage.Read(r)
-			if gomessage.IsUnknownCharset(err) {
-				m.Debug("Charset Error", map[string]interface{}{"Error": err, "status": "trying to convert"})
-				charSetError = true
-			} else if err != nil {
+			mr, err := m.read(r)
+			if err != nil {
 				m.Error("Read Error", map[string]interface{}{"Error": err})
-				if err != nil {
-					return []Mail{}, err
-				}
-			}
-			mr := gomail.NewReader(e)
-			if charSetError {
-				_, params, err := mr.Header.ContentType()
-				if err != nil {
-					return []Mail{}, err
-				}
-				newr, err := charset.Reader(params["charset"], r)
-				if err != nil {
-					m.Error("Charset Error", map[string]interface{}{"Error": err, "status": "could not convert"})
-					continue
-				}
-				e, err = gomessage.Read(newr)
-				if err != nil {
-					return []Mail{}, err
-				}
-				mr = gomail.NewReader(e)
+				return []Mail{}, err
 			}
 
-			var body string
-			// Process each message's part
-			for {
-				p, err := mr.NextPart()
-				if err == io.EOF {
-					break
-				} else if err != nil {
-					if err != nil {
-						return []Mail{}, err
-					}
-				}
+			if mr == nil {
+				continue
+			}
 
-				switch h := p.Header.(type) {
-				case *gomail.InlineHeader:
-					// This is the message's text (can be plain-text or HTML)
-					b, err := ioutil.ReadAll(p.Body)
-					if err != nil {
-						return []Mail{}, err
-					}
-					body = string(b)
-				case *gomail.AttachmentHeader:
-					// This is an attachment
-					filename, err := h.Filename()
-					if err != nil {
-						return []Mail{}, err
-					}
-					if filename != "" {
-						m.Debug("attachments found", map[string]interface{}{"filename": filename})
-					}
-				}
+			body, err := m.processReader(mr)
+			if err != nil {
+				m.Error("Read Processing Error", map[string]interface{}{"Error": err})
+				return []Mail{}, err
 			}
 
 			email := Mail{
