@@ -7,6 +7,8 @@ import (
 
 	imap "github.com/emersion/go-imap"
 	"github.com/emersion/go-imap/client"
+	gomessage "github.com/emersion/go-message"
+	"github.com/emersion/go-message/charset"
 	gomail "github.com/emersion/go-message/mail"
 )
 
@@ -90,9 +92,33 @@ func (m Mail2Most) GetMail(profile int) ([]Mail, error) {
 			r := msg.GetBody(&imap.BodySectionName{})
 
 			// https://github.com/emersion/go-imap/wiki/Fetching-messages
-			mr, err := gomail.CreateReader(r)
-			if err != nil {
-				return []Mail{}, err
+			var charSetError bool
+			e, err := gomessage.Read(r)
+			if gomessage.IsUnknownCharset(err) {
+				m.Debug("Charset Error", map[string]interface{}{"Error": err, "status": "trying to convert"})
+				charSetError = true
+			} else if err != nil {
+				m.Error("Read Error", map[string]interface{}{"Error": err})
+				if err != nil {
+					return []Mail{}, err
+				}
+			}
+			mr := gomail.NewReader(e)
+			if charSetError {
+				_, params, err := mr.Header.ContentType()
+				if err != nil {
+					return []Mail{}, err
+				}
+				newr, err := charset.Reader(params["charset"], r)
+				if err != nil {
+					m.Error("Charset Error", map[string]interface{}{"Error": err, "status": "could not convert"})
+					continue
+				}
+				e, err = gomessage.Read(newr)
+				if err != nil {
+					return []Mail{}, err
+				}
+				mr = gomail.NewReader(e)
 			}
 
 			var body string
