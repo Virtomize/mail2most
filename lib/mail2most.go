@@ -3,7 +3,6 @@ package mail2most
 import (
 	"encoding/json"
 	"io/ioutil"
-	"log"
 	"os"
 	"time"
 )
@@ -50,7 +49,9 @@ func (m Mail2Most) Run() error {
 				if send {
 					err := m.PostMattermost(p, mail)
 					if err != nil {
-						log.Fatal(err)
+						m.Error("Mattermost Error", map[string]interface{}{
+							"Error": err,
+						})
 					}
 					alreadySend[p] = append(alreadySend[p], mail.ID)
 					err = writeToFile(alreadySend, m.Config.General.File)

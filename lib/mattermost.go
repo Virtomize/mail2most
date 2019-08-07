@@ -67,7 +67,20 @@ func (m Mail2Most) PostMattermost(profile int, mail Mail) error {
 		post := &model.Post{ChannelId: ch.Id, Message: msg}
 		_, resp = c.CreatePost(post)
 		if resp.Error != nil {
-			return resp.Error
+			m.Error("Mattermost Post Error", map[string]interface{}{"Error": err, "status": "fallback send only subject"})
+			msg = fmt.Sprintf(
+				":email: _From: **<%s> %s@%s**_\n>_%s_\n\n",
+				mail.From[0].PersonalName,
+				mail.From[0].MailboxName,
+				mail.From[0].HostName,
+				mail.Subject,
+			)
+			post := &model.Post{ChannelId: ch.Id, Message: msg}
+			_, resp = c.CreatePost(post)
+			if resp.Error != nil {
+				m.Error("Mattermost Post Error", map[string]interface{}{"Error": err, "status": "fallback not working"})
+				return resp.Error
+			}
 		}
 	}
 
