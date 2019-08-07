@@ -154,13 +154,13 @@ func TestRead(t *testing.T) {
 	m2m, err := New("../conf/mail2most.conf")
 	assert.Nil(t, err)
 
-	mr, err := m2m.read(nil)
+	_, err = m2m.read(nil)
 	assert.Equal(t, err, fmt.Errorf("nil reader"))
 
-	mr, err = m2m.read(strings.NewReader(strings.ReplaceAll(testMailString, "windows-1252", "asdf")))
+	_, err = m2m.read(strings.NewReader(strings.ReplaceAll(testMailString, "windows-1252", "asdf")))
 	assert.Nil(t, err)
 
-	mr, err = m2m.read(strings.NewReader(testMailString))
+	mr, err := m2m.read(strings.NewReader(testMailString))
 	assert.Nil(t, err)
 
 	_, err = m2m.processReader(nil)
