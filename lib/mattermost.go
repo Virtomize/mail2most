@@ -55,6 +55,10 @@ func (m Mail2Most) PostMattermost(profile int, mail Mail) error {
 			body = space.ReplaceAllString(body, " ")
 
 			mail.Subject = blm.Sanitize(mail.Subject)
+			// just to be sure
+			mail.From[0].PersonalName = blm.Sanitize(mail.From[0].PersonalName)
+			mail.From[0].MailboxName = blm.Sanitize(mail.From[0].MailboxName)
+			mail.From[0].HostName = blm.Sanitize(mail.From[0].HostName)
 		}
 
 		msg := fmt.Sprintf(
@@ -76,6 +80,7 @@ func (m Mail2Most) PostMattermost(profile int, mail Mail) error {
 		}
 
 		// max message length is about 16383
+		// https://docs.mattermost.com/administration/important-upgrade-notes.html
 		if len(msg) > 16383 {
 			msg = msg[0:16382]
 		}
