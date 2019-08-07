@@ -3,9 +3,11 @@ package mail2most
 import (
 	"encoding/base64"
 	"fmt"
+	"regexp"
 	"strings"
 
 	"github.com/mattermost/mattermost-server/model"
+	"github.com/microcosm-cc/bluemonday"
 )
 
 func (m Mail2Most) mlogin(profile int) (*model.Client4, error) {
@@ -46,6 +48,15 @@ func (m Mail2Most) PostMattermost(profile int, mail Mail) error {
 			body = string(bb)
 		}
 
+		if m.Config.Profiles[profile].Mattermost.StripHTML {
+			blm := bluemonday.StrictPolicy()
+			body = blm.Sanitize(body)
+			space := regexp.MustCompile(`[\s\p{Zs}]{2,}`)
+			body = space.ReplaceAllString(body, " ")
+
+			mail.Subject = blm.Sanitize(mail.Subject)
+		}
+
 		msg := fmt.Sprintf(
 			":email: _From: **<%s> %s@%s**_\n>_%s_\n\n```\n%s```\n",
 			mail.From[0].PersonalName,
@@ -62,6 +73,11 @@ func (m Mail2Most) PostMattermost(profile int, mail Mail) error {
 				mail.From[0].HostName,
 				mail.Subject,
 			)
+		}
+
+		// max message length is about 16383
+		if len(msg) > 16383 {
+			msg = msg[0:16382]
 		}
 
 		post := &model.Post{ChannelId: ch.Id, Message: msg}

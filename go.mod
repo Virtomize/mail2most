@@ -12,6 +12,7 @@ require (
 	github.com/magefile/mage v1.8.0
 	github.com/mattermost/mattermost-server v0.0.0-20190626111855-f21a8a370f89
 	github.com/mholt/archiver v3.1.1+incompatible
+	github.com/microcosm-cc/bluemonday v1.0.2
 	github.com/nwaples/rardecode v1.0.0 // indirect
 	github.com/sirupsen/logrus v1.4.0
 	github.com/stretchr/testify v1.3.0
