@@ -3,11 +3,10 @@ package mail2most
 import (
 	"encoding/base64"
 	"fmt"
-	"regexp"
 	"strings"
 
+	"github.com/k3a/html2text"
 	"github.com/mattermost/mattermost-server/model"
-	"github.com/microcosm-cc/bluemonday"
 )
 
 func (m Mail2Most) mlogin(profile int) (*model.Client4, error) {
@@ -49,16 +48,11 @@ func (m Mail2Most) PostMattermost(profile int, mail Mail) error {
 		}
 
 		if m.Config.Profiles[profile].Mattermost.StripHTML {
-			blm := bluemonday.StrictPolicy()
-			body = blm.Sanitize(body)
-			space := regexp.MustCompile(`[\s\p{Zs}]{2,}`)
-			body = space.ReplaceAllString(body, " ")
-
-			mail.Subject = blm.Sanitize(mail.Subject)
-			// just to be sure
-			mail.From[0].PersonalName = blm.Sanitize(mail.From[0].PersonalName)
-			mail.From[0].MailboxName = blm.Sanitize(mail.From[0].MailboxName)
-			mail.From[0].HostName = blm.Sanitize(mail.From[0].HostName)
+			body = html2text.HTML2Text(body)
+			mail.Subject = html2text.HTML2Text(mail.Subject)
+			mail.From[0].PersonalName = html2text.HTML2Text(mail.From[0].PersonalName)
+			mail.From[0].MailboxName = html2text.HTML2Text(mail.From[0].MailboxName)
+			mail.From[0].HostName = html2text.HTML2Text(mail.From[0].HostName)
 		}
 
 		msg := fmt.Sprintf(
