@@ -36,7 +36,7 @@ func (m Mail2Most) Run() error {
 
 			for _, mail := range mails {
 				send := true
-				for _, id := range alreadySend[p] {
+				for _, id := range alreadySend[p-1] {
 					if mail.ID == id {
 						m.Debug("mail", map[string]interface{}{
 							"subject":    mail.Subject,
@@ -53,7 +53,7 @@ func (m Mail2Most) Run() error {
 							"Error": err,
 						})
 					}
-					alreadySend[p] = append(alreadySend[p], mail.ID)
+					alreadySend[p-1] = append(alreadySend[p-1], mail.ID)
 					err = writeToFile(alreadySend, m.Config.General.File)
 
 					if err != nil {
