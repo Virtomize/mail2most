@@ -10,6 +10,7 @@ import (
 // Run starts mail2most
 func (m Mail2Most) Run() error {
 	alreadySend := make([][]uint32, len(m.Config.Profiles))
+	alreadySendFile := make([][]uint32, len(m.Config.Profiles))
 	if _, err := os.Stat(m.Config.General.File); err == nil {
 		jsonFile, err := os.Open(m.Config.General.File)
 		if err != nil {
@@ -21,10 +22,18 @@ func (m Mail2Most) Run() error {
 			return err
 		}
 
-		err = json.Unmarshal(bv, &alreadySend)
+		err = json.Unmarshal(bv, &alreadySendFile)
 		if err != nil {
 			return err
 		}
+	}
+
+	// write cache to memory cache
+	// this is nessasary if new profiles are added
+	// and the caching file does not contain any caching
+	// for this profile
+	for k, v := range alreadySendFile {
+		alreadySend[k] = v
 	}
 
 	for {
@@ -36,7 +45,7 @@ func (m Mail2Most) Run() error {
 
 			for _, mail := range mails {
 				send := true
-				for _, id := range alreadySend[p-1] {
+				for _, id := range alreadySend[p] {
 					if mail.ID == id {
 						m.Debug("mail", map[string]interface{}{
 							"subject":    mail.Subject,
@@ -53,7 +62,7 @@ func (m Mail2Most) Run() error {
 							"Error": err,
 						})
 					}
-					alreadySend[p-1] = append(alreadySend[p-1], mail.ID)
+					alreadySend[p] = append(alreadySend[p], mail.ID)
 					err = writeToFile(alreadySend, m.Config.General.File)
 
 					if err != nil {
