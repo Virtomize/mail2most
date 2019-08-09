@@ -44,6 +44,8 @@ Just clone the repo and run `mage build`, you can find the binary under `bin/mai
 
 ## example conf - filter descriptions
 
+**just configure the filters you need if a filter is not defined it is not used !**
+
 see [example configuration](https://github.com/cseeger-epages/mail2most/blob/master/conf/mail2most.conf) for more details.
 
 # Run Mail2Most as a service
