@@ -38,7 +38,7 @@ func (m Mail2Most) Run() error {
 
 	// set a 10 seconds sleep default if no TimeInterval is defined
 	if m.Config.General.TimeInterval == 0 {
-		m.Debug("no check time interval set", map[string]interface{}{
+		m.Info("no check time interval set", map[string]interface{}{
 			"fallback":     10,
 			"unit-of-time": "second",
 		})
