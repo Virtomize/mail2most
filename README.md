@@ -110,7 +110,7 @@ Type=simple
 WorkingDirectory=/opt/mail2most
 ExecStart=/opt/mail2most/mail2most -c conf/mail2most.conf
 Restart=always
-Nice=5
+RestartSec=60
 
 [Install]
 WantedBy=multi-user.target
