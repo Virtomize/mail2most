@@ -12,7 +12,8 @@ type config struct {
 	Profiles []profile `toml:"Profile"`
 }
 type general struct {
-	File string
+	File         string
+	TimeInterval uint
 }
 
 type logging struct {

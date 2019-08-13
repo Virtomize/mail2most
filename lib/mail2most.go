@@ -36,6 +36,15 @@ func (m Mail2Most) Run() error {
 		alreadySend[k] = v
 	}
 
+	// set a 10 seconds sleep default if no TimeInterval is defined
+	if m.Config.General.TimeInterval == 0 {
+		m.Debug("no check time interval set", map[string]interface{}{
+			"fallback":     10,
+			"unit-of-time": "second",
+		})
+		m.Config.General.TimeInterval = 10
+	}
+
 	for {
 		for p := range m.Config.Profiles {
 			mails, err := m.GetMail(p)
@@ -71,7 +80,12 @@ func (m Mail2Most) Run() error {
 				}
 			}
 		}
-		time.Sleep(10 * time.Second)
+		//time.Sleep(time.Duration(m.Config.General.TimeInterval) * 10 * time.Second)
+		m.Debug("sleeping", map[string]interface{}{
+			"intervaltime": m.Config.General.TimeInterval,
+			"unit-of-time": "second",
+		})
+		time.Sleep(time.Duration(m.Config.General.TimeInterval) * time.Second)
 	}
 
 }
