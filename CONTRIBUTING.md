@@ -198,3 +198,9 @@ Releases are created for the following OS/Arch combinations:
 and can be found inside thei `bin/` folder.
 All combinations are packed with the default conf `conf/mail2most.conf` inside a tar gziped archive to easily upload the release.
 They follow the naming convention `[os]-[arch].tar.gz`
+
+upload docker
+
+```
+mage docker
+```
