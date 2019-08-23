@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"os/exec"
+	"strings"
 
 	"github.com/magefile/mage/sh"
 	"github.com/mholt/archiver"
@@ -143,12 +145,26 @@ func Docker() error {
 
 	copyFile(confFile, dockerPath+"/"+confFile, 1000)
 
+	cmd := exec.Command("git", "describe")
+	b, err := cmd.CombinedOutput()
+	if err != nil {
+		return err
+	}
+	tag := strings.TrimSuffix(string(b), "\n")
+
+	if err := sh.RunV("docker", "build", "-t", registry+":"+tag, "docker"); err != nil {
+		return err
+	}
+
+	if err := sh.RunV("docker", "push", registry+":"+tag); err != nil {
+		return err
+	}
+
 	if err := sh.RunV("docker", "build", "-t", registry+":latest", "docker"); err != nil {
 		return err
 	}
 
 	return sh.RunV("docker", "push", registry+":latest")
-	return nil
 }
 
 func cleanDocker() error {
