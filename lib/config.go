@@ -14,6 +14,7 @@ type config struct {
 type general struct {
 	File         string
 	TimeInterval uint
+	ImapTLS      bool
 }
 
 type logging struct {

@@ -21,4 +21,8 @@ func TestMail(t *testing.T) {
 
 	_, err = m2m.ListFlags(0)
 	assert.NotNil(t, err)
+
+	m2m.Config.General.ImapTLS = false
+	_, err = m2m.connect(0)
+	assert.NotNil(t, err)
 }
