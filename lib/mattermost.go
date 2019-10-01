@@ -73,6 +73,9 @@ func (m Mail2Most) PostMattermost(profile int, mail Mail) error {
 			)
 		}
 
+		for _, b := range m.Config.Profiles[profile].Mattermost.Broadcast {
+			msg = b + " " + msg
+		}
 		// max message length is about 16383
 		// https://docs.mattermost.com/administration/important-upgrade-notes.html
 		if len(msg) > 16383 {
