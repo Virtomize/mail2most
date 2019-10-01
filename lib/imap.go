@@ -12,7 +12,7 @@ func (m Mail2Most) connect(profile int) (*client.Client, error) {
 		c   *client.Client
 		err error
 	)
-	if m.Config.General.ImapTLS {
+	if m.Config.Profiles[profile].Mail.ImapTLS {
 		c, err = client.DialTLS(m.Config.Profiles[profile].Mail.ImapServer, nil)
 	} else {
 		c, err = client.Dial(m.Config.Profiles[profile].Mail.ImapServer)

@@ -14,7 +14,6 @@ type config struct {
 type general struct {
 	File         string
 	TimeInterval uint
-	ImapTLS      bool
 }
 
 type logging struct {
@@ -33,6 +32,7 @@ type profile struct {
 type maildata struct {
 	ImapServer, Username, Password string
 	ReadOnly                       bool
+	ImapTLS                        bool
 }
 
 type filter struct {
