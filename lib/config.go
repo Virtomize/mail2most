@@ -47,6 +47,7 @@ type mattermost struct {
 	Broadcast                     []string
 	SubjectOnly                   bool
 	StripHTML                     bool
+	HideFrom                      bool
 }
 
 func parseConfig(fileName string, conf *config) error {

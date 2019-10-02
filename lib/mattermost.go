@@ -55,20 +55,24 @@ func (m Mail2Most) PostMattermost(profile int, mail Mail) error {
 			mail.From[0].HostName = html2text.HTML2Text(mail.From[0].HostName)
 		}
 
-		msg := fmt.Sprintf(
-			":email: _From: **<%s> %s@%s**_\n>_%s_\n\n```\n%s```\n",
-			mail.From[0].PersonalName,
-			mail.From[0].MailboxName,
-			mail.From[0].HostName,
+		msg := ":email: "
+
+		if !m.Config.Profiles[profile].Mattermost.HideFrom {
+			msg += fmt.Sprintf("_From: **<%s> %s@%s**_",
+				mail.From[0].PersonalName,
+				mail.From[0].MailboxName,
+				mail.From[0].HostName,
+			)
+		}
+
+		msg += fmt.Sprintf(
+			"\n>_%s_\n\n```\n%s```\n",
 			mail.Subject,
 			body,
 		)
 		if m.Config.Profiles[profile].Mattermost.SubjectOnly {
-			msg = fmt.Sprintf(
-				":email: _From: **<%s> %s@%s**_\n>_%s_\n\n",
-				mail.From[0].PersonalName,
-				mail.From[0].MailboxName,
-				mail.From[0].HostName,
+			msg += fmt.Sprintf(
+				"\n>_%s_\n\n",
 				mail.Subject,
 			)
 		}
