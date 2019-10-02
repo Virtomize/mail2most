@@ -65,15 +65,16 @@ func (m Mail2Most) PostMattermost(profile int, mail Mail) error {
 			)
 		}
 
-		msg += fmt.Sprintf(
-			"\n>_%s_\n\n```\n%s```\n",
-			mail.Subject,
-			body,
-		)
 		if m.Config.Profiles[profile].Mattermost.SubjectOnly {
 			msg += fmt.Sprintf(
 				"\n>_%s_\n\n",
 				mail.Subject,
+			)
+		} else {
+			msg += fmt.Sprintf(
+				"\n>_%s_\n\n```\n%s```\n",
+				mail.Subject,
+				body,
 			)
 		}
 
