@@ -5,6 +5,7 @@ go 1.12
 require (
 	github.com/BurntSushi/toml v0.3.1
 	github.com/Flaque/filet v0.0.0-20190209224823-fc4d33cfcf93
+	github.com/cseeger-epages/go-message v0.0.0-00010101000000-000000000000
 	github.com/dsnet/compress v0.0.1 // indirect
 	github.com/emersion/go-imap v1.0.0-rc.2
 	github.com/emersion/go-message v0.10.4-0.20190609165112-592ace5bc1ca
@@ -23,3 +24,7 @@ require (
 	golang.org/x/crypto v0.0.0-20190621222207-cc06ce4a13d4 // indirect
 	golang.org/x/lint v0.0.0-20190409202823-959b441ac422 // indirect
 )
+
+replace willnorris.com/go/imageproxy v0.8.1-0.20190326225038-d4246a08fdec => willnorris.com/go/imageproxy v0.8.1-0.20190422234945-d4246a08fdec
+
+replace github.com/cseeger-epages/go-message => ../go-message

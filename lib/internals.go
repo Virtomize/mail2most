@@ -8,8 +8,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/cseeger-epages/go-message/charset"
 	gomessage "github.com/emersion/go-message"
-	"github.com/emersion/go-message/charset"
 	gomail "github.com/emersion/go-message/mail"
 )
 
