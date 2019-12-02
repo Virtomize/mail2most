@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"reflect"
 	"strings"
 	"time"
 
@@ -27,6 +28,19 @@ func New(confPath string) (Mail2Most, error) {
 	if err != nil {
 		return Mail2Most{}, err
 	}
+
+	for k, p := range conf.Profiles {
+		if p.Mail == (maildata{}) {
+			conf.Profiles[k].Mail = conf.DefaultProfile.Mail
+		}
+		if reflect.DeepEqual(p.Mattermost, mattermost{}) {
+			conf.Profiles[k].Mattermost = conf.DefaultProfile.Mattermost
+		}
+		if reflect.DeepEqual(p.Filter, filter{}) {
+			conf.Profiles[k].Filter = conf.DefaultProfile.Filter
+		}
+	}
+
 	m := Mail2Most{Config: conf}
 	err = m.initLogger()
 	if err != nil {

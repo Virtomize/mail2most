@@ -7,9 +7,10 @@ import (
 )
 
 type config struct {
-	General  general
-	Logging  logging
-	Profiles []profile `toml:"Profile"`
+	General        general
+	Logging        logging
+	Profiles       []profile `toml:"Profile"`
+	DefaultProfile profile
 }
 type general struct {
 	File         string
