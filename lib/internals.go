@@ -8,10 +8,17 @@ import (
 	"strings"
 	"time"
 
-	"github.com/cseeger-epages/go-message/charset"
 	gomessage "github.com/emersion/go-message"
+	"github.com/emersion/go-message/charset"
 	gomail "github.com/emersion/go-message/mail"
 )
+
+func init() {
+	// additional charsets are defined in charsets.go
+	for name, chst := range charsets {
+		charset.RegisterEncoding(name, chst)
+	}
+}
 
 // New creates a new Mail2Most object
 func New(confPath string) (Mail2Most, error) {
