@@ -74,8 +74,9 @@ func (m Mail2Most) Run() error {
 						m.Error("Mattermost Error", map[string]interface{}{
 							"Error": err,
 						})
+					} else {
+						alreadySend[p] = append(alreadySend[p], mail.ID)
 					}
-					alreadySend[p] = append(alreadySend[p], mail.ID)
 					err = writeToFile(alreadySend, m.Config.General.File)
 
 					if err != nil {

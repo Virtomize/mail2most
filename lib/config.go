@@ -45,6 +45,7 @@ type filter struct {
 type mattermost struct {
 	URL, Team, Username, Password string
 	Channels                      []string
+	Users                         []string
 	Broadcast                     []string
 	SubjectOnly                   bool
 	StripHTML                     bool
