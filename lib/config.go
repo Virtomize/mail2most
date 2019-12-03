@@ -25,9 +25,10 @@ type logging struct {
 }
 
 type profile struct {
-	Mail       maildata
-	Mattermost mattermost
-	Filter     filter
+	IgnoreDefaults bool
+	Mail           maildata
+	Mattermost     mattermost
+	Filter         filter
 }
 
 type maildata struct {

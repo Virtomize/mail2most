@@ -30,14 +30,16 @@ func New(confPath string) (Mail2Most, error) {
 	}
 
 	for k, p := range conf.Profiles {
-		if p.Mail == (maildata{}) {
-			conf.Profiles[k].Mail = conf.DefaultProfile.Mail
-		}
-		if reflect.DeepEqual(p.Mattermost, mattermost{}) {
-			conf.Profiles[k].Mattermost = conf.DefaultProfile.Mattermost
-		}
-		if reflect.DeepEqual(p.Filter, filter{}) {
-			conf.Profiles[k].Filter = conf.DefaultProfile.Filter
+		if !p.IgnoreDefaults {
+			if p.Mail == (maildata{}) {
+				conf.Profiles[k].Mail = conf.DefaultProfile.Mail
+			}
+			if reflect.DeepEqual(p.Mattermost, mattermost{}) {
+				conf.Profiles[k].Mattermost = conf.DefaultProfile.Mattermost
+			}
+			if reflect.DeepEqual(p.Filter, filter{}) {
+				conf.Profiles[k].Filter = conf.DefaultProfile.Filter
+			}
 		}
 	}
 

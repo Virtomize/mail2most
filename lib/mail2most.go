@@ -32,8 +32,19 @@ func (m Mail2Most) Run() error {
 	// this is nessasary if new profiles are added
 	// and the caching file does not contain any caching
 	// for this profile
+	l := len(alreadySend)
 	for k, v := range alreadySendFile {
-		alreadySend[k] = v
+		if k < l {
+			alreadySend[k] = v
+		}
+		if k >= l {
+			m.Error("data.json error", map[string]interface{}{
+				"error":    "data.json contains more profile information than defined in the config",
+				"cause":    "this happens if profiles are deleted from the config file and can create inconsistencies",
+				"solution": "delete the data.json file",
+				"note":     "by deleting the data.json file all mails are parsed and send again",
+			})
+		}
 	}
 
 	// set a 10 seconds sleep default if no TimeInterval is defined
@@ -92,5 +103,4 @@ func (m Mail2Most) Run() error {
 		})
 		time.Sleep(time.Duration(m.Config.General.TimeInterval) * time.Second)
 	}
-
 }
