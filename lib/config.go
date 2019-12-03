@@ -44,13 +44,13 @@ type filter struct {
 }
 
 type mattermost struct {
-	URL, Team, Username, Password string
-	Channels                      []string
-	Users                         []string
-	Broadcast                     []string
-	SubjectOnly                   bool
-	StripHTML                     bool
-	HideFrom                      bool
+	URL, Team, Username, Password, AccessToken string
+	Channels                                   []string
+	Users                                      []string
+	Broadcast                                  []string
+	SubjectOnly                                bool
+	StripHTML                                  bool
+	HideFrom                                   bool
 }
 
 func parseConfig(fileName string, conf *config) error {
