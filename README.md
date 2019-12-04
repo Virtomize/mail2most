@@ -129,9 +129,11 @@ systemctl start mail2most
 ## Common problems
 
 **Problem: mail2most crashes after profile changes**
+
 Solution: This happens when the data.json is not consistent to the config changes. Delete data.json to solve this problem.
 
 **Problem: Channel contains special characters mattermost can not found the channel**
+
 Solution: Mattermost does not support special characters for channel names, only in display names. To find the correct channel name use the last part of the url found under `view info`
 
 # Contribution to Mail2Most
