@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"reflect"
 	"strings"
 	"time"
 
@@ -27,6 +28,30 @@ func New(confPath string) (Mail2Most, error) {
 	if err != nil {
 		return Mail2Most{}, err
 	}
+
+	for k, p := range conf.Profiles {
+		if !p.IgnoreDefaults {
+			// create a default profile and overwrite what is defined in the profile
+			prof := conf.DefaultProfile
+			voft := reflect.ValueOf(&prof).Elem()
+			vof := reflect.ValueOf(p)
+			for i := 0; i < voft.NumField(); i++ {
+				for j := 0; j < vof.NumField(); j++ {
+					if vof.Field(j).Type().Kind() == reflect.Struct {
+						if voft.Type().Field(i).Name == vof.Type().Field(j).Name {
+							for k := 0; k < vof.Field(j).NumField(); k++ {
+								if !vof.Field(j).Field(k).IsZero() {
+									voft.Field(i).FieldByName(vof.Field(j).Type().Field(k).Name).Set(vof.Field(j).Field(k))
+								}
+							}
+						}
+					}
+				}
+			}
+			conf.Profiles[k] = prof
+		}
+	}
+
 	m := Mail2Most{Config: conf}
 	err = m.initLogger()
 	if err != nil {

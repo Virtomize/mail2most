@@ -19,8 +19,10 @@ Filter emails from mail accounts and send them to mattermost.
 - Filter mails by To
 - Filter mails by Subject
 - Filter mails by TimeRange
-- Mattermost Broadcasts
+- Mattermost broadcasts
 - Choose to post Subject and Body or Subject only
+- Send to channels and/or users
+- Profile management including default profiles
 
 Missing feature or found a bug ? Feel free to open an [issue](https://github.com/cseeger-epages/mail2most/issues) and let us know !
 
@@ -123,6 +125,16 @@ enable and start using
 systemctl enable mail2most
 systemctl start mail2most
 ```
+
+## Common problems
+
+**Problem: mail2most crashes after profile changes**
+
+Solution: This happens when the data.json is not consistent to the config changes. Delete data.json to solve this problem.
+
+**Problem: Channel contains special characters mattermost can not found the channel**
+
+Solution: Mattermost does not support special characters for channel names, only in display names. To find the correct channel name use the last part of the url found under `view info`
 
 # Contribution to Mail2Most
 

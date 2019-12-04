@@ -7,9 +7,10 @@ import (
 )
 
 type config struct {
-	General  general
-	Logging  logging
-	Profiles []profile `toml:"Profile"`
+	General        general
+	Logging        logging
+	Profiles       []profile `toml:"Profile"`
+	DefaultProfile profile
 }
 type general struct {
 	File         string
@@ -24,9 +25,10 @@ type logging struct {
 }
 
 type profile struct {
-	Mail       maildata
-	Mattermost mattermost
-	Filter     filter
+	IgnoreDefaults bool
+	Mail           maildata
+	Mattermost     mattermost
+	Filter         filter
 }
 
 type maildata struct {
@@ -42,12 +44,13 @@ type filter struct {
 }
 
 type mattermost struct {
-	URL, Team, Username, Password string
-	Channels                      []string
-	Broadcast                     []string
-	SubjectOnly                   bool
-	StripHTML                     bool
-	HideFrom                      bool
+	URL, Team, Username, Password, AccessToken string
+	Channels                                   []string
+	Users                                      []string
+	Broadcast                                  []string
+	SubjectOnly                                bool
+	StripHTML                                  bool
+	HideFrom                                   bool
 }
 
 func parseConfig(fileName string, conf *config) error {
