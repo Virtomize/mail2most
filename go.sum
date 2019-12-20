@@ -58,6 +58,8 @@ github.com/emersion/go-imap v1.0.0-rc.2 h1:+us4+584bVl9EeBh6MwDo108mX2yHI1EP9oWK
 github.com/emersion/go-imap v1.0.0-rc.2/go.mod h1:MEiDDwwQFcZ+L45Pa68jNGv0qU9kbW+SJzwDpvSfX1s=
 github.com/emersion/go-message v0.10.4-0.20190609165112-592ace5bc1ca h1:OYhqtJI4eOLvGtRIsUfP87VMJ1J/o6ks1tah9DlYkn4=
 github.com/emersion/go-message v0.10.4-0.20190609165112-592ace5bc1ca/go.mod h1:3h+HsGTCFHmk4ngJ2IV/YPhdlaOcR6hcgqM3yca9v7c=
+github.com/emersion/go-message v0.11.0 h1:3QfliZOm2SzKUBW1CxHAsBNSouopWZALdNbYV9TD+ew=
+github.com/emersion/go-message v0.11.0/go.mod h1:C4jnca5HOTo4bGN9YdqNQM9sITuT3Y0K6bSUw9RklvY=
 github.com/emersion/go-sasl v0.0.0-20190520160400-47d427600317 h1:tYZxAY8nu3JJQKios9f27Sbvbkfm4XHXT476gVtszu0=
 github.com/emersion/go-sasl v0.0.0-20190520160400-47d427600317/go.mod h1:G/dpzLu16WtQpBfQ/z3LYiYJn3ZhKSGWn83fyoyQe/k=
 github.com/emersion/go-textwrapper v0.0.0-20160606182133-d0e65e56babe h1:40SWqY0zE3qCi6ZrtTf5OUdNm5lDnGnjRSq9GgmeTrg=

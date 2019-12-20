@@ -7,7 +7,7 @@ require (
 	github.com/Flaque/filet v0.0.0-20190209224823-fc4d33cfcf93
 	github.com/dsnet/compress v0.0.1 // indirect
 	github.com/emersion/go-imap v1.0.0-rc.2
-	github.com/emersion/go-message v0.10.4-0.20190609165112-592ace5bc1ca
+	github.com/emersion/go-message v0.11.0
 	github.com/go-ldap/ldap v3.0.3+incompatible // indirect
 	github.com/k3a/html2text v0.0.0-20190714173509-955615037597
 	github.com/magefile/mage v1.8.0
