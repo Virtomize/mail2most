@@ -3,6 +3,7 @@ package mail2most
 import (
 	"encoding/json"
 	"fmt"
+	"image"
 	"io"
 	"io/ioutil"
 	"reflect"
@@ -209,7 +210,11 @@ func (m Mail2Most) processReader(mr *gomail.Reader) (string, error) {
 			if err != nil {
 				return "", err
 			}
-			body = string(b)
+			_, _, err = image.Decode(strings.NewReader(string(b)))
+			// images will be ignored
+			if err != nil {
+				body += string(b)
+			}
 		case *gomail.AttachmentHeader:
 			// This is an attachment
 			filename, err := h.Filename()
