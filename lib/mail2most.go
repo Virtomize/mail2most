@@ -89,10 +89,10 @@ func (m Mail2Most) Run() error {
 						alreadySend[p] = append(alreadySend[p], mail.ID)
 					}
 					err = writeToFile(alreadySend, m.Config.General.File)
-
 					if err != nil {
 						return err
 					}
+
 				}
 			}
 		}

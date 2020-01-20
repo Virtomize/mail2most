@@ -23,6 +23,7 @@ Filter emails from mail accounts and send them to mattermost.
 - Choose to post Subject and Body or Subject only
 - Send to channels and/or users
 - Profile management including default profiles
+- Mail attachment support
 
 Missing feature or found a bug ? Feel free to open an [issue](https://github.com/cseeger-epages/mail2most/issues) and let us know !
 

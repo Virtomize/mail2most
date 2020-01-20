@@ -108,14 +108,33 @@ func (m Mail2Most) PostMattermost(profile int, mail Mail) error {
 			return resp.Error
 		}
 
+		var fileIDs []string
+		if m.Config.Profiles[profile].Mattermost.MailAttachments {
+			for _, a := range mail.Attachments {
+				fileResp, resp := c.UploadFile(a.Content, ch.Id, a.Filename)
+				if resp.Error != nil {
+					m.Error("Mattermost Upload File Error", map[string]interface{}{"error": resp.Error})
+				} else {
+					if len(fileResp.FileInfos) != 1 {
+						m.Error("Mattermost Upload File Error", map[string]interface{}{"error": resp.Error, "fileinfos": fileResp.FileInfos})
+					} else {
+						fileIDs = append(fileIDs, fileResp.FileInfos[0].Id)
+					}
+				}
+			}
+		}
+
 		post := &model.Post{ChannelId: ch.Id, Message: msg}
+		if len(fileIDs) > 0 {
+			post.FileIds = fileIDs
+		}
 		_, resp = c.CreatePost(post)
 		if resp.Error != nil {
-			m.Error("Mattermost Post Error", map[string]interface{}{"Error": resp.Error, "status": "fallback send only subject"})
+			m.Error("Mattermost Post Error", map[string]interface{}{"error": resp.Error, "status": "fallback send only subject"})
 			post := &model.Post{ChannelId: ch.Id, Message: fallback}
 			_, resp = c.CreatePost(post)
 			if resp.Error != nil {
-				m.Error("Mattermost Post Error", map[string]interface{}{"Error": resp.Error, "status": "fallback not working"})
+				m.Error("Mattermost Post Error", map[string]interface{}{"error": resp.Error, "status": "fallback not working"})
 				return resp.Error
 			}
 		}
@@ -165,7 +184,26 @@ func (m Mail2Most) PostMattermost(profile int, mail Mail) error {
 				return resp.Error
 			}
 
+			var fileIDs []string
+			if m.Config.Profiles[profile].Mattermost.MailAttachments {
+				for _, a := range mail.Attachments {
+					fileResp, resp := c.UploadFile(a.Content, ch.Id, a.Filename)
+					if resp.Error != nil {
+						m.Error("Mattermost Upload File Error", map[string]interface{}{"error": resp.Error})
+					} else {
+						if len(fileResp.FileInfos) != 1 {
+							m.Error("Mattermost Upload File Error", map[string]interface{}{"error": resp.Error, "fileinfos": fileResp.FileInfos})
+						} else {
+							fileIDs = append(fileIDs, fileResp.FileInfos[0].Id)
+						}
+					}
+				}
+			}
+
 			post := &model.Post{ChannelId: ch.Id, Message: msg}
+			if len(fileIDs) > 0 {
+				post.FileIds = fileIDs
+			}
 			_, resp = c.CreatePost(post)
 			if resp.Error != nil {
 				m.Error("Mattermost Post Error", map[string]interface{}{"Error": err, "status": "fallback send only subject"})

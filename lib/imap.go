@@ -104,19 +104,20 @@ func (m Mail2Most) GetMail(profile int) ([]Mail, error) {
 				continue
 			}
 
-			body, err := m.processReader(mr)
+			body, attachments, err := m.processReader(mr)
 			if err != nil {
 				m.Error("Read Processing Error", map[string]interface{}{"Error": err})
 				return []Mail{}, err
 			}
 
 			email := Mail{
-				ID:      msg.Uid,
-				From:    msg.Envelope.From,
-				To:      msg.Envelope.To,
-				Subject: msg.Envelope.Subject,
-				Body:    strings.TrimSuffix(body, "\n"),
-				Date:    msg.Envelope.Date,
+				ID:          msg.Uid,
+				From:        msg.Envelope.From,
+				To:          msg.Envelope.To,
+				Subject:     msg.Envelope.Subject,
+				Body:        strings.TrimSuffix(body, "\n"),
+				Date:        msg.Envelope.Date,
+				Attachments: attachments,
 			}
 
 			test, err := m.checkFilters(profile, email)

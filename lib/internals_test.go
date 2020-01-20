@@ -163,10 +163,10 @@ func TestRead(t *testing.T) {
 	mr, err := m2m.read(strings.NewReader(testMailString))
 	assert.Nil(t, err)
 
-	_, err = m2m.processReader(nil)
+	_, _, err = m2m.processReader(nil)
 	assert.Equal(t, err, fmt.Errorf("nil reader"))
 
-	b, err := m2m.processReader(mr)
+	b, _, err := m2m.processReader(mr)
 	assert.Nil(t, err)
 	assert.Equal(t, b, "What's your name?<div>What's <i>your</i> name?</div>")
 }
