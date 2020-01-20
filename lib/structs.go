@@ -19,4 +19,11 @@ type Mail struct {
 	Subject, Body string
 	From, To      []*imap.Address
 	Date          time.Time
+	Attachments   []Attachment
+}
+
+// Attachment .
+type Attachment struct {
+	Filename string
+	Content  []byte
 }

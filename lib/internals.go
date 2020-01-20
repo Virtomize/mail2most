@@ -10,6 +10,11 @@ import (
 	"strings"
 	"time"
 
+	// image extensions
+	_ "image/gif"
+	_ "image/jpeg"
+	_ "image/png"
+
 	gomessage "github.com/emersion/go-message"
 	"github.com/emersion/go-message/charset"
 	gomail "github.com/emersion/go-message/mail"
@@ -186,12 +191,15 @@ func (m Mail2Most) read(r io.Reader) (*gomail.Reader, error) {
 	return mr, nil
 }
 
-// processReader processes a mail.Reader and returns the body or an error
-func (m Mail2Most) processReader(mr *gomail.Reader) (string, error) {
+// processReader processes a mail.Reader and returns the body and a list of attachment filename paths or an error
+func (m Mail2Most) processReader(mr *gomail.Reader) (string, []Attachment, error) {
 	if mr == nil {
-		return "", fmt.Errorf("nil reader")
+		return "", []Attachment{}, fmt.Errorf("nil reader")
 	}
-	var body string
+	var (
+		body        string
+		attachments []Attachment
+	)
 	// Process each message's part
 	for {
 		p, err := mr.NextPart()
@@ -199,7 +207,7 @@ func (m Mail2Most) processReader(mr *gomail.Reader) (string, error) {
 			break
 		} else if err != nil {
 			if err != nil {
-				return "", err
+				return "", []Attachment{}, err
 			}
 		}
 
@@ -208,7 +216,7 @@ func (m Mail2Most) processReader(mr *gomail.Reader) (string, error) {
 			// This is the message's text (can be plain-text or HTML)
 			b, err := ioutil.ReadAll(p.Body)
 			if err != nil {
-				return "", err
+				return "", []Attachment{}, err
 			}
 			_, _, err = image.Decode(strings.NewReader(string(b)))
 			// images will be ignored
@@ -219,12 +227,19 @@ func (m Mail2Most) processReader(mr *gomail.Reader) (string, error) {
 			// This is an attachment
 			filename, err := h.Filename()
 			if err != nil {
-				return "", err
+				return "", []Attachment{}, err
 			}
 			if filename != "" {
 				m.Debug("attachments found", map[string]interface{}{"filename": filename})
 			}
+
+			b, err := ioutil.ReadAll(p.Body)
+			if err != nil {
+				return "", []Attachment{}, err
+			}
+
+			attachments = append(attachments, Attachment{Filename: filename, Content: b})
 		}
 	}
-	return body, nil
+	return body, attachments, nil
 }
