@@ -109,15 +109,17 @@ func (m Mail2Most) PostMattermost(profile int, mail Mail) error {
 		}
 
 		var fileIDs []string
-		for _, a := range mail.Attachments {
-			fileResp, resp := c.UploadFile(a.Content, ch.Id, a.Filename)
-			if resp.Error != nil {
-				m.Error("Mattermost Upload File Error", map[string]interface{}{"error": resp.Error})
-			} else {
-				if len(fileResp.FileInfos) != 1 {
-					m.Error("Mattermost Upload File Error", map[string]interface{}{"error": resp.Error, "fileinfos": fileResp.FileInfos})
+		if m.Config.Profiles[profile].Mattermost.MailAttachments {
+			for _, a := range mail.Attachments {
+				fileResp, resp := c.UploadFile(a.Content, ch.Id, a.Filename)
+				if resp.Error != nil {
+					m.Error("Mattermost Upload File Error", map[string]interface{}{"error": resp.Error})
 				} else {
-					fileIDs = append(fileIDs, fileResp.FileInfos[0].Id)
+					if len(fileResp.FileInfos) != 1 {
+						m.Error("Mattermost Upload File Error", map[string]interface{}{"error": resp.Error, "fileinfos": fileResp.FileInfos})
+					} else {
+						fileIDs = append(fileIDs, fileResp.FileInfos[0].Id)
+					}
 				}
 			}
 		}
@@ -183,15 +185,17 @@ func (m Mail2Most) PostMattermost(profile int, mail Mail) error {
 			}
 
 			var fileIDs []string
-			for _, a := range mail.Attachments {
-				fileResp, resp := c.UploadFile(a.Content, ch.Id, a.Filename)
-				if resp.Error != nil {
-					m.Error("Mattermost Upload File Error", map[string]interface{}{"error": resp.Error})
-				} else {
-					if len(fileResp.FileInfos) != 1 {
-						m.Error("Mattermost Upload File Error", map[string]interface{}{"error": resp.Error, "fileinfos": fileResp.FileInfos})
+			if m.Config.Profiles[profile].Mattermost.MailAttachments {
+				for _, a := range mail.Attachments {
+					fileResp, resp := c.UploadFile(a.Content, ch.Id, a.Filename)
+					if resp.Error != nil {
+						m.Error("Mattermost Upload File Error", map[string]interface{}{"error": resp.Error})
 					} else {
-						fileIDs = append(fileIDs, fileResp.FileInfos[0].Id)
+						if len(fileResp.FileInfos) != 1 {
+							m.Error("Mattermost Upload File Error", map[string]interface{}{"error": resp.Error, "fileinfos": fileResp.FileInfos})
+						} else {
+							fileIDs = append(fileIDs, fileResp.FileInfos[0].Id)
+						}
 					}
 				}
 			}
