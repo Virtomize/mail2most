@@ -168,5 +168,5 @@ func TestRead(t *testing.T) {
 
 	b, err := m2m.processReader(mr)
 	assert.Nil(t, err)
-	assert.Equal(t, b, "<div>What's <i>your</i> name?</div>")
+	assert.Equal(t, b, "What's your name?<div>What's <i>your</i> name?</div>")
 }
