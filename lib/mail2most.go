@@ -58,16 +58,7 @@ func (m Mail2Most) Run() error {
 
 	for {
 		for p := range m.Config.Profiles {
-			c, err := m.connect(p)
-			if err != nil {
-				m.Error("Error connecting mailserver", map[string]interface{}{
-					"Error":  err,
-					"Server": m.Config.Profiles[p].Mail.ImapServer,
-				})
-			}
-			defer c.Logout()
-
-			mails, err := m.GetMail(p, c)
+			mails, err := m.GetMail(p)
 			if err != nil {
 				m.Error("Error reaching mailserver", map[string]interface{}{
 					"Error":  err,

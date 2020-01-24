@@ -10,10 +10,10 @@ func TestMail(t *testing.T) {
 	m2m, err := New("../conf/mail2most.conf")
 	assert.Nil(t, err)
 
-	c, err := m2m.connect(0)
+	_, err = m2m.connect(0)
 	assert.NotNil(t, err)
 
-	_, err = m2m.GetMail(0, c)
+	_, err = m2m.GetMail(0)
 	assert.NotNil(t, err)
 
 	_, err = m2m.ListMailBoxes(0)
