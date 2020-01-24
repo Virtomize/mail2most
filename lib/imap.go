@@ -1,6 +1,7 @@
 package mail2most
 
 import (
+	"fmt"
 	"strings"
 
 	imap "github.com/emersion/go-imap"
@@ -34,14 +35,10 @@ func (m Mail2Most) connect(profile int) (*client.Client, error) {
 }
 
 // GetMail returns emails filter by profile id
-func (m Mail2Most) GetMail(profile int) ([]Mail, error) {
-
-	// Connect to server
-	c, err := m.connect(profile)
-	if err != nil {
-		return []Mail{}, err
+func (m Mail2Most) GetMail(profile int, c *client.Client) ([]Mail, error) {
+	if c == nil {
+		return []Mail{}, fmt.Errorf("client is nil")
 	}
-	defer c.Logout()
 
 	// Select Folder
 	folders := []string{"INBOX"}
