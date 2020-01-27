@@ -35,6 +35,7 @@ type maildata struct {
 	ImapServer, Username, Password string
 	ReadOnly                       bool
 	ImapTLS                        bool
+	VerifyTLS                      bool
 }
 
 type filter struct {

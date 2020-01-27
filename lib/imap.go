@@ -1,6 +1,7 @@
 package mail2most
 
 import (
+	"crypto/tls"
 	"strings"
 
 	imap "github.com/emersion/go-imap"
@@ -13,7 +14,12 @@ func (m Mail2Most) connect(profile int) (*client.Client, error) {
 		err error
 	)
 	if m.Config.Profiles[profile].Mail.ImapTLS {
-		c, err = client.DialTLS(m.Config.Profiles[profile].Mail.ImapServer, nil)
+		var tlsconf tls.Config
+
+		if !m.Config.Profiles[profile].Mail.VerifyTLS {
+			tlsconf.InsecureSkipVerify = true
+		}
+		c, err = client.DialTLS(m.Config.Profiles[profile].Mail.ImapServer, &tlsconf)
 	} else {
 		c, err = client.Dial(m.Config.Profiles[profile].Mail.ImapServer)
 	}
