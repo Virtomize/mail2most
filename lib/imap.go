@@ -110,7 +110,7 @@ func (m Mail2Most) GetMail(profile int) ([]Mail, error) {
 				continue
 			}
 
-			body, attachments, err := m.processReader(mr)
+			body, attachments, err := m.processReader(mr, profile)
 			if err != nil {
 				m.Error("Read Processing Error", map[string]interface{}{"Error": err})
 				return []Mail{}, err
