@@ -61,11 +61,22 @@ func (m Mail2Most) PostMattermost(profile int, mail Mail) error {
 	msg := ":email: "
 
 	if !m.Config.Profiles[profile].Mattermost.HideFrom {
-		msg += fmt.Sprintf("_From: **<%s> %s@%s**_",
-			mail.From[0].PersonalName,
-			mail.From[0].MailboxName,
-			mail.From[0].HostName,
-		)
+		email := fmt.Sprintf("%s@%s", mail.From[0].MailboxName, mail.From[0].HostName)
+		user, resp := c.GetUserByEmail(email, "")
+		if resp.Error != nil {
+			fmt.Println("Error: ", resp.Error)
+			msg += fmt.Sprintf("_From: **<%s> %s@%s**_",
+				mail.From[0].PersonalName,
+				mail.From[0].MailboxName,
+				mail.From[0].HostName,
+			)
+		} else {
+			msg += fmt.Sprintf("_From: **<%s> %s@%s**_",
+				"@"+user.Username,
+				mail.From[0].MailboxName,
+				mail.From[0].HostName,
+			)
+		}
 	}
 
 	if m.Config.Profiles[profile].Mattermost.SubjectOnly {
