@@ -66,6 +66,7 @@ func (m Mail2Most) GetMail(profile int) ([]Mail, error) {
 			return []Mail{}, err
 		}
 
+		limit := m.Config.Profiles[profile].Mail.Limit - 1
 		seqset := new(imap.SeqSet)
 		if m.Config.Profiles[profile].Filter.Unseen {
 			criteria := imap.NewSearchCriteria()
@@ -74,13 +75,29 @@ func (m Mail2Most) GetMail(profile int) ([]Mail, error) {
 			if len(ids) == 0 {
 				continue
 			}
-			m.Info("unseen mails", map[string]interface{}{"ids": ids})
 			if err != nil {
 				return []Mail{}, err
 			}
-			seqset.AddNum(ids...)
+			if limit > 0 {
+				m.Info("unseen mails limit found", map[string]interface{}{"ids": ids[0:limit], "limit": limit + 1})
+				seqset.AddNum(ids[0:limit]...)
+			} else {
+				m.Info("unseen mails", map[string]interface{}{"ids": ids})
+				seqset.AddNum(ids...)
+			}
 		} else {
-			seqset.AddRange(uint32(1), mbox.Messages)
+			from := uint32(1)
+			to := mbox.Messages
+			if limit > 0 {
+				if mbox.Messages > limit {
+					from = mbox.Messages - limit
+				}
+				seqset.AddRange(from, to)
+				m.Info("new mails", map[string]interface{}{"from": from, "to": to, "count": to - from, "limit": limit + 1})
+			} else {
+				seqset.AddRange(uint32(1), mbox.Messages)
+				m.Info("unseen mails", map[string]interface{}{"from": uint32(1), "to": mbox.Messages, "count": mbox.Messages})
+			}
 		}
 
 		// nothing to do here
@@ -91,7 +108,7 @@ func (m Mail2Most) GetMail(profile int) ([]Mail, error) {
 		m.Info("processing mails", map[string]interface{}{
 			"folder": folder,
 		})
-		messages := make(chan *imap.Message, 100)
+		messages := make(chan *imap.Message, 1000)
 		done := make(chan error, 1)
 		go func() {
 			done <- c.Fetch(seqset, []imap.FetchItem{imap.FetchEnvelope, "BODY[]", imap.FetchUid}, messages)

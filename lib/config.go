@@ -36,6 +36,7 @@ type maildata struct {
 	ReadOnly                       bool
 	ImapTLS                        bool
 	VerifyTLS                      bool
+	Limit                          uint32
 }
 
 type filter struct {
