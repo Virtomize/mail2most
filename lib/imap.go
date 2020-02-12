@@ -87,13 +87,12 @@ func (m Mail2Most) GetMail(profile int) ([]Mail, error) {
 			}
 		} else {
 			from := uint32(1)
-			to := mbox.Messages
 			if limit > 0 {
 				if mbox.Messages > limit {
 					from = mbox.Messages - limit
 				}
-				seqset.AddRange(from, to)
-				m.Info("new mails", map[string]interface{}{"from": from, "to": to, "count": to - from, "limit": limit + 1})
+				seqset.AddRange(from, mbox.Messages)
+				m.Info("new mails", map[string]interface{}{"from": from, "to": mbox.Messages, "limit": limit + 1})
 			} else {
 				seqset.AddRange(uint32(1), mbox.Messages)
 				m.Info("unseen mails", map[string]interface{}{"from": uint32(1), "to": mbox.Messages, "count": mbox.Messages})
@@ -115,6 +114,7 @@ func (m Mail2Most) GetMail(profile int) ([]Mail, error) {
 		}()
 
 		for msg := range messages {
+			m.Debug("processing message", map[string]interface{}{"uid": msg.Uid, "subject": msg.Envelope.Subject})
 			r := msg.GetBody(&imap.BodySectionName{})
 
 			mr, err := m.read(r)
@@ -150,9 +150,11 @@ func (m Mail2Most) GetMail(profile int) ([]Mail, error) {
 
 			if test {
 				m.Info("found mail", map[string]interface{}{
-					"subject": msg.Envelope.Subject, "message-id": email.ID,
+					"subject": msg.Envelope.Subject, "uid": msg.Uid,
 				})
 				mails = append(mails, email)
+			} else {
+				m.Debug("message not passing the filter", map[string]interface{}{"subject": msg.Envelope.Subject, "uid": msg.Uid})
 			}
 		}
 
