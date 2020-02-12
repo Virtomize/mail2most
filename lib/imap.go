@@ -66,13 +66,19 @@ func (m Mail2Most) GetMail(profile int) ([]Mail, error) {
 			return []Mail{}, err
 		}
 
+		m.Info("processing mails", map[string]interface{}{
+			"folder": folder,
+		})
+
 		limit := m.Config.Profiles[profile].Mail.Limit - 1
 		seqset := new(imap.SeqSet)
 		if m.Config.Profiles[profile].Filter.Unseen {
+			m.Debug("searching unseen", map[string]interface{}{"unseen": m.Config.Profiles[profile].Filter.Unseen})
 			criteria := imap.NewSearchCriteria()
 			criteria.WithoutFlags = []string{imap.SeenFlag}
 			ids, err := c.Search(criteria)
 			if len(ids) == 0 {
+				m.Debug("no mails found", nil)
 				continue
 			}
 			if err != nil {
@@ -101,12 +107,10 @@ func (m Mail2Most) GetMail(profile int) ([]Mail, error) {
 
 		// nothing to do here
 		if seqset.Empty() {
+			m.Debug("no mails found", map[string]interface{}{"folder": folder})
 			continue
 		}
 
-		m.Info("processing mails", map[string]interface{}{
-			"folder": folder,
-		})
 		messages := make(chan *imap.Message, 1000)
 		done := make(chan error, 1)
 		go func() {
