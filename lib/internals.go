@@ -192,7 +192,7 @@ func (m Mail2Most) read(r io.Reader) (*gomail.Reader, error) {
 }
 
 // processReader processes a mail.Reader and returns the body and a list of attachment filename paths or an error
-func (m Mail2Most) processReader(mr *gomail.Reader) (string, []Attachment, error) {
+func (m Mail2Most) processReader(mr *gomail.Reader, profile int) (string, []Attachment, error) {
 	if mr == nil {
 		return "", []Attachment{}, fmt.Errorf("nil reader")
 	}
@@ -225,20 +225,22 @@ func (m Mail2Most) processReader(mr *gomail.Reader) (string, []Attachment, error
 			}
 		case *gomail.AttachmentHeader:
 			// This is an attachment
-			filename, err := h.Filename()
-			if err != nil {
-				return "", []Attachment{}, err
-			}
-			if filename != "" {
-				m.Debug("attachments found", map[string]interface{}{"filename": filename})
-			}
+			if m.Config.Profiles[profile].Mattermost.MailAttachments {
+				filename, err := h.Filename()
+				if err != nil {
+					return "", []Attachment{}, err
+				}
+				if filename != "" {
+					m.Debug("attachments found", map[string]interface{}{"filename": filename})
+				}
 
-			b, err := ioutil.ReadAll(p.Body)
-			if err != nil {
-				return "", []Attachment{}, err
-			}
+				b, err := ioutil.ReadAll(p.Body)
+				if err != nil {
+					return "", []Attachment{}, err
+				}
 
-			attachments = append(attachments, Attachment{Filename: filename, Content: b})
+				attachments = append(attachments, Attachment{Filename: filename, Content: b})
+			}
 		}
 	}
 	return body, attachments, nil

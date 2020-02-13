@@ -64,7 +64,7 @@ func (m Mail2Most) PostMattermost(profile int, mail Mail) error {
 		email := fmt.Sprintf("%s@%s", mail.From[0].MailboxName, mail.From[0].HostName)
 		user, resp := c.GetUserByEmail(email, "")
 		if resp.Error != nil {
-			fmt.Println("Error: ", resp.Error)
+			m.Debug("get user by email error", map[string]interface{}{"error": resp.Error})
 			msg += fmt.Sprintf("_From: **<%s> %s@%s**_",
 				mail.From[0].PersonalName,
 				mail.From[0].MailboxName,
@@ -109,6 +109,10 @@ func (m Mail2Most) PostMattermost(profile int, mail Mail) error {
 		mail.Subject,
 	)
 
+	if len(m.Config.Profiles[profile].Mattermost.Channels) == 0 {
+		m.Debug("no channels configured to send to", nil)
+	}
+
 	for _, channel := range m.Config.Profiles[profile].Mattermost.Channels {
 
 		channelName := strings.ReplaceAll(channel, "#", "")
@@ -149,6 +153,7 @@ func (m Mail2Most) PostMattermost(profile int, mail Mail) error {
 				return resp.Error
 			}
 		}
+		m.Debug("mattermost post", map[string]interface{}{"channel": ch.Id, "subject": mail.Subject})
 	}
 
 	if len(m.Config.Profiles[profile].Mattermost.Users) > 0 {
@@ -226,6 +231,8 @@ func (m Mail2Most) PostMattermost(profile int, mail Mail) error {
 				}
 			}
 		}
+	} else {
+		m.Debug("no users configured to send to", nil)
 	}
 
 	return nil
