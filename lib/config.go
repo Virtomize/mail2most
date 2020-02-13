@@ -52,6 +52,7 @@ type mattermost struct {
 	Broadcast                                  []string
 	SubjectOnly                                bool
 	StripHTML                                  bool
+	ConvertToMarkdown                          bool
 	HideFrom                                   bool
 	MailAttachments                            bool
 }
