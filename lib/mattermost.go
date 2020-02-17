@@ -1,10 +1,12 @@
 package mail2most
 
 import (
+	"bytes"
 	"encoding/base64"
 	"fmt"
 	"strings"
 
+	"github.com/cseeger-epages/godown"
 	"github.com/k3a/html2text"
 	"github.com/mattermost/mattermost-server/model"
 )
@@ -51,7 +53,12 @@ func (m Mail2Most) PostMattermost(profile int, mail Mail) error {
 	}
 
 	if m.Config.Profiles[profile].Mattermost.ConvertToMarkdown {
-		// tbd convert body to markdown
+		var b bytes.Buffer
+		err := godown.Convert(&b, strings.NewReader(body), nil)
+		if err != nil {
+			return err
+		}
+		body = b.String()
 	} else if m.Config.Profiles[profile].Mattermost.StripHTML {
 		body = html2text.HTML2Text(body)
 		mail.Subject = html2text.HTML2Text(mail.Subject)

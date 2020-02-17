@@ -7,6 +7,7 @@ require (
 	github.com/Flaque/filet v0.0.0-20190209224823-fc4d33cfcf93
 	github.com/PuerkitoBio/goquery v1.5.0
 	github.com/Skarlso/html-to-markdown v0.0.0-20191210071215-2cf06e949e49
+	github.com/cseeger-epages/godown v0.0.0-20180312012330-2e9e17e0ea51
 	github.com/dsnet/compress v0.0.1 // indirect
 	github.com/emersion/go-imap v1.0.0-rc.2
 	github.com/emersion/go-message v0.11.0
