@@ -14,6 +14,7 @@ Filter emails from mail accounts and send them to mattermost.
 
 - IMAP(S) support
 - Mattermost v4 API support
+- HTML 2 Markdown support
 - Filter mails by Folder
 - Filter mails by From
 - Filter mails by To

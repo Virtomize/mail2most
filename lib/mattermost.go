@@ -1,10 +1,12 @@
 package mail2most
 
 import (
+	"bytes"
 	"encoding/base64"
 	"fmt"
 	"strings"
 
+	"github.com/cseeger-epages/godown"
 	"github.com/k3a/html2text"
 	"github.com/mattermost/mattermost-server/model"
 )
@@ -50,7 +52,14 @@ func (m Mail2Most) PostMattermost(profile int, mail Mail) error {
 		body = string(bb)
 	}
 
-	if m.Config.Profiles[profile].Mattermost.StripHTML {
+	if m.Config.Profiles[profile].Mattermost.ConvertToMarkdown {
+		var b bytes.Buffer
+		err := godown.Convert(&b, strings.NewReader(body), nil)
+		if err != nil {
+			return err
+		}
+		body = b.String()
+	} else if m.Config.Profiles[profile].Mattermost.StripHTML {
 		body = html2text.HTML2Text(body)
 		mail.Subject = html2text.HTML2Text(mail.Subject)
 		mail.From[0].PersonalName = html2text.HTML2Text(mail.From[0].PersonalName)
@@ -85,11 +94,19 @@ func (m Mail2Most) PostMattermost(profile int, mail Mail) error {
 			mail.Subject,
 		)
 	} else {
-		msg += fmt.Sprintf(
-			"\n>_%s_\n\n```\n%s```\n",
-			mail.Subject,
-			body,
-		)
+		if m.Config.Profiles[profile].Mattermost.ConvertToMarkdown {
+			msg += fmt.Sprintf(
+				"\n>_%s_\n\n\n%s\n",
+				mail.Subject,
+				body,
+			)
+		} else {
+			msg += fmt.Sprintf(
+				"\n>_%s_\n\n```\n%s```\n",
+				mail.Subject,
+				body,
+			)
+		}
 	}
 
 	for _, b := range m.Config.Profiles[profile].Mattermost.Broadcast {
