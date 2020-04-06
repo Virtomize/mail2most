@@ -1,4 +1,5 @@
 conf/test.conf
+conf/test2.conf
 data.json
 bin/
 coverage.out
