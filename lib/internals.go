@@ -249,6 +249,10 @@ func (m Mail2Most) processReader(mr *gomail.Reader, profile int) (string, []Atta
 					// images will be ignored
 					if err != nil {
 						b, err = m.parseText(b)
+						if err != nil {
+							m.Error("Parse Text Error", map[string]interface{}{"error": err, "function": "Mail2Most.parseText", "stage": "parse plain text"})
+							continue
+						}
 						text += string(b)
 					}
 				}
