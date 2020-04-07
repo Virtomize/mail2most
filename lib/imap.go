@@ -70,7 +70,7 @@ func (m Mail2Most) GetMail(profile int) ([]Mail, error) {
 			"folder": folder,
 		})
 
-		limit := m.Config.Profiles[profile].Mail.Limit - 1
+		limit := m.Config.Profiles[profile].Mail.Limit
 		seqset := new(imap.SeqSet)
 		if m.Config.Profiles[profile].Filter.Unseen {
 			m.Debug("searching unseen", map[string]interface{}{"unseen": m.Config.Profiles[profile].Filter.Unseen})
@@ -84,6 +84,12 @@ func (m Mail2Most) GetMail(profile int) ([]Mail, error) {
 			if err != nil {
 				return []Mail{}, err
 			}
+
+			// Avoid bucket overflows on ids[0:limit]
+			if limit > uint32(len(ids)) {
+				limit = uint32(len(ids))
+			}
+
 			if limit > 0 {
 				m.Info("unseen mails limit found", map[string]interface{}{"ids": ids[0:limit], "limit": limit + 1})
 				seqset.AddNum(ids[0:limit]...)
@@ -111,7 +117,7 @@ func (m Mail2Most) GetMail(profile int) ([]Mail, error) {
 			continue
 		}
 
-		messages := make(chan *imap.Message, 1000)
+		messages := make(chan *imap.Message, 10000)
 		done := make(chan error, 1)
 		go func() {
 			done <- c.Fetch(seqset, []imap.FetchItem{imap.FetchEnvelope, "BODY[]", imap.FetchUid}, messages)
@@ -123,7 +129,7 @@ func (m Mail2Most) GetMail(profile int) ([]Mail, error) {
 
 			mr, err := m.read(r)
 			if err != nil {
-				m.Error("Read Error", map[string]interface{}{"Error": err})
+				m.Error("Read Error", map[string]interface{}{"Error": err, "function": "Mail2Most.GetMail"})
 				return []Mail{}, err
 			}
 
@@ -135,6 +141,24 @@ func (m Mail2Most) GetMail(profile int) ([]Mail, error) {
 			if err != nil {
 				m.Error("Read Processing Error", map[string]interface{}{"Error": err})
 				return []Mail{}, err
+			}
+
+			// Skip empty messages.
+			if len(strings.TrimSpace(body)) < 1 && len(attachments) < 1 {
+				m.Info("blank message", map[string]interface{}{
+					"subject": msg.Envelope.Subject, "uid": msg.Uid,
+				})
+				continue
+			}
+
+			// Skip mailserver error notifications.
+			if strings.HasPrefix(msg.Envelope.Subject, "Delivery Status Notification") {
+				if m.Config.Profiles[profile].Filter.IgnoreMailErrorNotifications {
+					m.Info("skipping mailserver error", map[string]interface{}{
+						"subject": msg.Envelope.Subject, "uid": msg.Uid,
+					})
+					continue
+				}
 			}
 
 			email := Mail{
