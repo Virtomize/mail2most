@@ -96,6 +96,12 @@ func (m Mail2Most) Run() error {
 				}
 			}
 		}
+
+		if !m.Config.General.RunAsService {
+			m.Info("done", map[string]interface{}{"Config.General.RunAsService": false, "status": "configured to run only once"})
+			break
+		}
+
 		//time.Sleep(time.Duration(m.Config.General.TimeInterval) * 10 * time.Second)
 		m.Debug("sleeping", map[string]interface{}{
 			"intervaltime": m.Config.General.TimeInterval,
@@ -103,4 +109,6 @@ func (m Mail2Most) Run() error {
 		})
 		time.Sleep(time.Duration(m.Config.General.TimeInterval) * time.Second)
 	}
+
+	return nil
 }

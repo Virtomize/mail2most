@@ -3,6 +3,7 @@ package mail2most
 import (
 	"bytes"
 	"encoding/base64"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -33,6 +34,23 @@ func (m Mail2Most) mlogin(profile int) (*model.Client4, error) {
 	}
 
 	return c, nil
+}
+
+func (m Mail2Most) getFromLine(profile int, userName string, email string) string {
+	// nothing to do here
+	if len(userName) < 1 && len(email) < 1 {
+		return ""
+	}
+
+	if !m.Config.Profiles[profile].Mattermost.HideFromEmail {
+		return fmt.Sprintf("_From: **<%s> %s**_",
+			userName,
+			email,
+		)
+	}
+	return fmt.Sprintf("_From: **%s**_",
+		userName,
+	)
 }
 
 // PostMattermost posts a msg to mattermost
@@ -67,25 +85,32 @@ func (m Mail2Most) PostMattermost(profile int, mail Mail) error {
 		mail.From[0].HostName = html2text.HTML2Text(mail.From[0].HostName)
 	}
 
+	if len(strings.TrimSpace(body)) < 1 {
+		m.Info("dead body found", map[string]interface{}{"function": "Mail2Most.PostMattermost"})
+		return nil
+	}
+
 	msg := ":email: "
 
 	if !m.Config.Profiles[profile].Mattermost.HideFrom {
+		if len(mail.From[0].PersonalName) < 1 && len(mail.From[0].MailboxName) < 1 && len(mail.From[0].HostName) < 1 {
+			// skip this message, it didn't come from anywhere
+			return errors.New("Null sender, skipping message")
+		}
 		email := fmt.Sprintf("%s@%s", mail.From[0].MailboxName, mail.From[0].HostName)
 		user, resp := c.GetUserByEmail(email, "")
 		if resp.Error != nil {
-			m.Debug("get user by email error", map[string]interface{}{"error": resp.Error})
-			msg += fmt.Sprintf("_From: **<%s> %s@%s**_",
-				mail.From[0].PersonalName,
-				mail.From[0].MailboxName,
-				mail.From[0].HostName,
-			)
+			m.Debug("user not found in system", map[string]interface{}{"error": resp.Error})
+			msg += m.getFromLine(profile, mail.From[0].PersonalName, email)
 		} else {
-			msg += fmt.Sprintf("_From: **<%s> %s@%s**_",
-				"@"+user.Username,
-				mail.From[0].MailboxName,
-				mail.From[0].HostName,
-			)
+			msg += m.getFromLine(profile, "@"+user.Username, email)
 		}
+	}
+
+	if m.Config.Profiles[profile].Mattermost.SubjectOnly && m.Config.Profiles[profile].Mattermost.BodyOnly {
+		err := fmt.Errorf("config defines SubjectOnly and BodyOnly to be true which exclude each other")
+		m.Error("Configuration inconsistency found", map[string]interface{}{"Config.Profile.Mattermost.SubjectOnly": true, "Config.Profile.Mattermost.BodyOnly": true, "error": err})
+		return err
 	}
 
 	if m.Config.Profiles[profile].Mattermost.SubjectOnly {
@@ -94,15 +119,20 @@ func (m Mail2Most) PostMattermost(profile int, mail Mail) error {
 			mail.Subject,
 		)
 	} else {
+		if m.Config.Profiles[profile].Mattermost.BodyOnly {
+			mail.Subject = "\n\n\n\n\n"
+		} else {
+			mail.Subject = fmt.Sprintf("\n>_%s_\n\n", mail.Subject)
+		}
 		if m.Config.Profiles[profile].Mattermost.ConvertToMarkdown {
 			msg += fmt.Sprintf(
-				"\n>_%s_\n\n\n%s\n",
+				"%s\n%s\n",
 				mail.Subject,
 				body,
 			)
 		} else {
 			msg += fmt.Sprintf(
-				"\n>_%s_\n\n```\n%s```\n",
+				"%s```\n%s```\n",
 				mail.Subject,
 				body,
 			)
@@ -119,10 +149,8 @@ func (m Mail2Most) PostMattermost(profile int, mail Mail) error {
 	}
 
 	fallback := fmt.Sprintf(
-		":email: _From: **<%s> %s@%s**_\n>_%s_\n\n",
-		mail.From[0].PersonalName,
-		mail.From[0].MailboxName,
-		mail.From[0].HostName,
+		":email: _%s**_\n>_%s_\n\n",
+		m.getFromLine(profile, mail.From[0].PersonalName, mail.From[0].MailboxName+"@"+mail.From[0].HostName),
 		mail.Subject,
 	)
 
@@ -137,6 +165,7 @@ func (m Mail2Most) PostMattermost(profile int, mail Mail) error {
 
 		ch, resp := c.GetChannelByNameForTeamName(channelName, m.Config.Profiles[profile].Mattermost.Team, "")
 		if resp.Error != nil {
+			m.Error("Get Channel Error", map[string]interface{}{"error": resp.Error, "function": "GetCChannelByNameForTeamName"})
 			return resp.Error
 		}
 
@@ -154,12 +183,16 @@ func (m Mail2Most) PostMattermost(profile int, mail Mail) error {
 					}
 				}
 			}
+			if len(fileIDs) < len(mail.Attachments) {
+				m.Error("some files did not upload", map[string]interface{}{"files": len(fileIDs), "attachments": len(mail.Attachments)})
+			}
 		}
 
 		post := &model.Post{ChannelId: ch.Id, Message: msg}
 		if len(fileIDs) > 0 {
 			post.FileIds = fileIDs
 		}
+		m.Debug("mattermost post", map[string]interface{}{"channel": ch.Id, "subject": mail.Subject, "bytes": len(msg)})
 		_, resp = c.CreatePost(post)
 		if resp.Error != nil {
 			m.Error("Mattermost Post Error", map[string]interface{}{"error": resp.Error, "status": "fallback send only subject"})
@@ -170,7 +203,6 @@ func (m Mail2Most) PostMattermost(profile int, mail Mail) error {
 				return resp.Error
 			}
 		}
-		m.Debug("mattermost post", map[string]interface{}{"channel": ch.Id, "subject": mail.Subject})
 	}
 
 	if len(m.Config.Profiles[profile].Mattermost.Users) > 0 {

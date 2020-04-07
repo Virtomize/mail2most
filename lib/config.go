@@ -14,6 +14,7 @@ type config struct {
 }
 type general struct {
 	File         string
+	RunAsService bool
 	TimeInterval uint
 }
 
@@ -40,9 +41,10 @@ type maildata struct {
 }
 
 type filter struct {
-	Folders, From, To, Subject []string
-	Unseen                     bool
-	TimeRange                  string
+	Folders, From, To, Subject   []string
+	Unseen                       bool
+	TimeRange                    string
+	IgnoreMailErrorNotifications bool
 }
 
 type mattermost struct {
@@ -51,9 +53,11 @@ type mattermost struct {
 	Users                                      []string
 	Broadcast                                  []string
 	SubjectOnly                                bool
+	BodyOnly                                   bool
 	StripHTML                                  bool
 	ConvertToMarkdown                          bool
 	HideFrom                                   bool
+	HideFromEmail                              bool
 	MailAttachments                            bool
 }
 
