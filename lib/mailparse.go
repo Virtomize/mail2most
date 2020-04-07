@@ -49,6 +49,7 @@ func (m Mail2Most) parseHTML(b []byte, profile int) ([]byte, error) {
 	}
 
 	// Strip out HTML header, since we don't really need it.
+	// works not as intended i think
 	hb := regexp.MustCompile(`(?i)<html.*/head>`)
 	b = hb.ReplaceAll(b, []byte(""))
 
@@ -134,11 +135,11 @@ func (m Mail2Most) parseHTML(b []byte, profile int) ([]byte, error) {
 	b = nw.ReplaceAll(b, []byte(""))
 
 	// Remove all <span> tags and leave their contents
-	sp := regexp.MustCompile(`<span>(.*?)</span>`)
+	sp := regexp.MustCompile(`<span[^>]*>(.*?)</span>`)
 	b = sp.ReplaceAll(b, []byte("$1"))
 
 	// Remove all <img> tags that don't point to websites.
-	im := regexp.MustCompile(`<img.+src="[^h][^t][^>]*?>`)
+	im := regexp.MustCompile(`<img.+src=[^h][^t][^>]*?>`)
 	b = im.ReplaceAll(b, []byte(""))
 
 	// Remove excessive <br>s
@@ -164,7 +165,7 @@ func (m Mail2Most) parseHTML(b []byte, profile int) ([]byte, error) {
 
 	// Finally, if we're lucky enough to have a "Sent from" footer to the reply, kill everything else. This is
 	// typical on iOS, Samsung, and Blackberry devices. If the user has a custom signature, this won't help.
-	sf := regexp.MustCompile(`(Sent [Ff]rom|Sent via).*`)
+	sf := regexp.MustCompile(`Sent ([Ff]rom|via).*`)
 	b = sf.ReplaceAll(b, []byte(""))
 
 	return b, nil
