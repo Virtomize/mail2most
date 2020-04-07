@@ -165,7 +165,7 @@ func (m Mail2Most) parseHTML(b []byte, profile int) ([]byte, error) {
 
 	// Finally, if we're lucky enough to have a "Sent from" footer to the reply, kill everything else. This is
 	// typical on iOS, Samsung, and Blackberry devices. If the user has a custom signature, this won't help.
-	sf := regexp.MustCompile(`Sent ([Ff]rom|via).*`)
+	sf := regexp.MustCompile(`(Sent [Ff]rom|Sent via).*`)
 	b = sf.ReplaceAll(b, []byte(""))
 
 	return b, nil
