@@ -63,6 +63,7 @@ func (m Mail2Most) PostMattermost(profile int, mail Mail) error {
 
 	// check if body is base64 encoded
 	var body string
+
 	bb, err := base64.StdEncoding.DecodeString(mail.Body)
 	if err != nil {
 		body = mail.Body
@@ -88,6 +89,14 @@ func (m Mail2Most) PostMattermost(profile int, mail Mail) error {
 	if len(strings.TrimSpace(body)) < 1 {
 		m.Info("dead body found", map[string]interface{}{"function": "Mail2Most.PostMattermost"})
 		return nil
+	}
+
+	if m.Config.Profiles[profile].Mattermost.BodyPrefix != "" {
+		body = m.Config.Profiles[profile].Mattermost.BodyPrefix + "\n" + body
+	}
+
+	if m.Config.Profiles[profile].Mattermost.BodySuffix != "" {
+		body = body + "\n" + m.Config.Profiles[profile].Mattermost.BodySuffix
 	}
 
 	msg := ":email: "
