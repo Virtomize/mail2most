@@ -59,6 +59,7 @@ type mattermost struct {
 	HideFrom                                   bool
 	HideFromEmail                              bool
 	MailAttachments                            bool
+	BodyPrefix, BodySuffix                     string
 }
 
 func parseConfig(fileName string, conf *config) error {
