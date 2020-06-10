@@ -50,7 +50,7 @@ func (m Mail2Most) parseHTML(b []byte, profile int) ([]byte, error) {
 
 	// Strip out HTML header, since we don't really need it.
 	// works not as intended i think
-	hb := regexp.MustCompile(`(?i)<html.*/head>`)
+	hb := regexp.MustCompile(`(?i)<html((.|\n)*)\/head>`)
 	b = hb.ReplaceAll(b, []byte(""))
 
 	// Try to cut out the rest of a reply that comes from Outlook.  :)
@@ -139,7 +139,7 @@ func (m Mail2Most) parseHTML(b []byte, profile int) ([]byte, error) {
 	b = sp.ReplaceAll(b, []byte("$1"))
 
 	// Remove all <img> tags that don't point to websites.
-	im := regexp.MustCompile(`<img.+src=[^h][^t][^>]*?>`)
+	im := regexp.MustCompile(`<img.+?src=[\"'](.+?)[\"'].*?>`)
 	b = im.ReplaceAll(b, []byte(""))
 
 	// Remove excessive <br>s
