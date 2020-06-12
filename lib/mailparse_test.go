@@ -24,6 +24,10 @@ func TestParseHTML(t *testing.T) {
 
 	tests := []string{
 		"<html></head>", // this works quite strange and should be refactored maybe
+		`<html>
+		<head>
+		foo
+		</head>`,
 		`<div class="ms-outlook-ios-signature">
 		foo`,
 		"Sent with BlackBerry Work",
@@ -36,8 +40,7 @@ func TestParseHTML(t *testing.T) {
 		`<div></div>`,
 		`<o:p foo></o:p>`,
 		`<span foo></span>`,
-		`<img src="...">`,
-		`<img src='...'>`,
+		`<img width="42" height="42" src="https://foo.bar/img.png">`,
 		`<p></p>`,
 		`<blockquote foo>`,
 		`Sent from foo`,
