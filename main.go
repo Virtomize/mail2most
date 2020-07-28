@@ -4,7 +4,7 @@ import (
 	"flag"
 	"log"
 
-	m2m "github.com/cseeger-epages/mail2most/lib"
+	m2m "github.com/virtomize/mail2most/lib"
 )
 
 func main() {

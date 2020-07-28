@@ -4,7 +4,7 @@ the requirements below.
 
 Bug fixes and new features should include unit tests.
 
-Contributors guide: https://github.com/cseeger-epages/mail2most/blob/master/CONTRIBUTING.md
+Contributors guide: https://github.com/virtomize/mail2most/blob/master/CONTRIBUTING.md
 -->
 
 ##### Checklist

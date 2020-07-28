@@ -7,9 +7,9 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/cseeger-epages/godown"
 	"github.com/k3a/html2text"
 	"github.com/mattermost/mattermost-server/model"
+	"github.com/mattn/godown"
 )
 
 func (m Mail2Most) mlogin(profile int) (*model.Client4, error) {

@@ -1,11 +1,11 @@
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=VBXHBYFU44T5W&source=url)
-[![GoDoc](https://img.shields.io/badge/godoc-reference-green.svg)](https://godoc.org/github.com/cseeger-epages/mail2most/lib)
-[![Go Report Card](https://goreportcard.com/badge/github.com/cseeger-epages/mail2most)](https://goreportcard.com/report/github.com/cseeger-epages/mail2most)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/cseeger-epages/mail2most/blob/master/LICENSE)
+[![GoDoc](https://img.shields.io/badge/godoc-reference-green.svg)](https://godoc.org/github.com/virtomize/mail2most/lib)
+[![Go Report Card](https://goreportcard.com/badge/github.com/virtomize/mail2most)](https://goreportcard.com/report/github.com/virtomize/mail2most)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/virtomize/mail2most/blob/master/LICENSE)
 [![Built with Mage](https://magefile.org/badge.svg)](https://magefile.org)
-[![Build Status](https://api.travis-ci.org/cseeger-epages/mail2most.svg?branch=master)](https://travis-ci.org/cseeger-epages/mail2most)
+[![Build Status](https://api.travis-ci.org/virtomize/mail2most.svg?branch=master)](https://travis-ci.org/virtomize/mail2most)
 
-# [![Mail2Most](https://user-images.githubusercontent.com/13348918/60418882-560c3480-9be4-11e9-9f30-b0124a162630.png)](https://github.com/cseeger-epages/mail2most)
+# [![Mail2Most](https://user-images.githubusercontent.com/13348918/60418882-560c3480-9be4-11e9-9f30-b0124a162630.png)](https://github.com/virtomize/mail2most)
 
 Filter emails from mail accounts and send them to mattermost.
 
@@ -27,13 +27,13 @@ Filter emails from mail accounts and send them to mattermost.
 - Profile management including default profiles
 - Mail attachment support
 
-Missing feature or found a bug ? Feel free to open an [issue](https://github.com/cseeger-epages/mail2most/issues) and let us know !
+Missing feature or found a bug ? Feel free to open an [issue](https://github.com/virtomize/mail2most/issues) and let us know !
 
 # Install
 
 ## download
 
-Download [Latest Release Version](https://github.com/cseeger-epages/mail2most/releases/latest)
+Download [Latest Release Version](https://github.com/virtomize/mail2most/releases/latest)
 
 ## build it yourself
 
@@ -52,7 +52,7 @@ Just clone the repo and run `mage build`, you can find the binary under `bin/mai
 
 **just configure the filters you need if a filter is not defined it is not used !**
 
-see [example configuration](https://github.com/cseeger-epages/mail2most/blob/master/conf/mail2most.conf) for more details.
+see [example configuration](https://github.com/virtomize/mail2most/blob/master/conf/mail2most.conf) for more details.
 
 # Run Mail2Most as a service
 
@@ -146,4 +146,4 @@ Solution: Mattermost does not support special characters for channel names, only
 # Contribution to Mail2Most
 
 Thank you for participating to this project.
-Please see our [Contribution Guidlines](https://github.com/cseeger-epages/mail2most/blob/master/CONTRIBUTING.md) for more information.
+Please see our [Contribution Guidlines](https://github.com/virtomize/mail2most/blob/master/CONTRIBUTING.md) for more information.
