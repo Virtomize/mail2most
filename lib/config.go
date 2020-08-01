@@ -38,6 +38,7 @@ type maildata struct {
 	ImapTLS                        bool
 	VerifyTLS                      bool
 	Limit                          uint32
+	GenerateLocalUIDs              bool
 }
 
 type filter struct {
