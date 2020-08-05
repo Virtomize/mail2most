@@ -3,6 +3,7 @@ package mail2most
 import (
 	"crypto/tls"
 	"hash/fnv"
+	"strconv"
 	"strings"
 
 	imap "github.com/emersion/go-imap"
@@ -132,7 +133,7 @@ func (m Mail2Most) GetMail(profile int) ([]Mail, error) {
 			if m.Config.Profiles[profile].Mail.GenerateLocalUIDs {
 				h := fnv.New32a()
 				h.Reset()
-				h.Write([]byte(msg.Envelope.MessageId))
+				h.Write([]byte(msg.Envelope.MessageId + "/profile/" + strconv.Itoa(profile)))
 				msg.Uid = h.Sum32()
 			}
 			m.Debug("processing message", map[string]interface{}{"uid": msg.Uid, "subject": msg.Envelope.Subject})
