@@ -145,7 +145,7 @@ func Docker() error {
 
 	copyFile(confFile, dockerPath+"/"+confFile, 1000)
 
-	cmd := exec.Command("git", "describe")
+	cmd := exec.Command("git", "describe", "--tags")
 	b, err := cmd.CombinedOutput()
 	if err != nil {
 		return err
