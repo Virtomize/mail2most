@@ -213,9 +213,8 @@ func (m Mail2Most) parseAttachment(body []byte, header string) (Attachment, erro
 
 	sum := sha256.Sum256(body)
 	if _, ok := seenAttachments[sum]; ok {
-		// throwing an error here is a bit strange it would be better to return the existing attachment
 		// btw this could be exploited by creating a hash colision :D
-		return Attachment{}, errors.New("attachment already exists")
+		return Attachment{Filename: seenAttachments[sum], Content: body}, nil
 	}
 
 	seenAttachments[sum] = filename
