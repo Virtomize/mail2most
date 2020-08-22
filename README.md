@@ -11,6 +11,7 @@ Filter emails from mail accounts and send them to mattermost.
 
 ![mail2most-image](https://user-images.githubusercontent.com/13348918/60437141-ff1b5500-9c0d-11e9-913f-ae7c4a034b10.png)
 
+
 # Features
 
 - IMAP(S) support
@@ -28,6 +29,11 @@ Filter emails from mail accounts and send them to mattermost.
 - Mail attachment support
 
 Missing feature or found a bug ? Feel free to open an [issue](https://github.com/virtomize/mail2most/issues) and let us know !
+
+## Donation
+If this project helps you, feel free to give us a cup of coffee :).
+
+[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=VBXHBYFU44T5W&source=url)
 
 # Install
 
