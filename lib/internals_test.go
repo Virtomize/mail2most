@@ -80,7 +80,7 @@ func TestFilters(t *testing.T) {
 	_, err = m2m.filterByTimeRange(0, mail)
 	assert.NotNil(t, err)
 	if err != nil {
-		assert.Equal(t, err.Error(), "time: invalid duration foo")
+		assert.Equal(t, err.Error(), "time: invalid duration \"foo\"")
 	}
 
 	mail.Subject = "i am an example subject"
@@ -112,7 +112,7 @@ func TestFilters(t *testing.T) {
 	_, err = m2m.checkFilters(0, mail)
 	assert.NotNil(t, err)
 	if err != nil {
-		assert.Equal(t, err.Error(), "time: invalid duration foo")
+		assert.Equal(t, err.Error(), "time: invalid duration \"foo\"")
 	}
 
 	// empty filters
