@@ -2,6 +2,8 @@ package mail2most
 
 import (
 	"crypto/tls"
+	"hash/fnv"
+	"strconv"
 	"strings"
 
 	imap "github.com/emersion/go-imap"
@@ -120,10 +122,22 @@ func (m Mail2Most) GetMail(profile int) ([]Mail, error) {
 		messages := make(chan *imap.Message, 10000)
 		done := make(chan error, 1)
 		go func() {
-			done <- c.Fetch(seqset, []imap.FetchItem{imap.FetchEnvelope, "BODY[]", imap.FetchUid}, messages)
+			fetchMessage := imap.FetchUid
+			if m.Config.Profiles[profile].Mail.GenerateLocalUIDs {
+				fetchMessage = imap.FetchRFC822
+			}
+			done <- c.Fetch(seqset, []imap.FetchItem{imap.FetchEnvelope, "BODY[]", fetchMessage}, messages)
 		}()
 
 		for msg := range messages {
+			if m.Config.Profiles[profile].Mail.GenerateLocalUIDs {
+				h := fnv.New32a()
+				h.Reset()
+				// since we make this profile specific changing the profile order will break this
+				// but using the profile will prevent having dublicated uid between profiles with the same mailbox
+				h.Write([]byte(msg.Envelope.MessageId + "/profile/" + strconv.Itoa(profile)))
+				msg.Uid = h.Sum32()
+			}
 			m.Debug("processing message", map[string]interface{}{"uid": msg.Uid, "subject": msg.Envelope.Subject})
 			r := msg.GetBody(&imap.BodySectionName{})
 
