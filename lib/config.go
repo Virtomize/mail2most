@@ -36,6 +36,7 @@ type maildata struct {
 	ImapServer, Username, Password string
 	ReadOnly                       bool
 	ImapTLS                        bool
+	StartTLS                       bool
 	VerifyTLS                      bool
 	Limit                          uint32
 	GenerateLocalUIDs              bool
