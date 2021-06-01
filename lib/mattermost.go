@@ -100,6 +100,7 @@ func (m Mail2Most) PostMattermost(profile int, mail Mail) error {
 	}
 
 	msg := ":email: "
+	var shortmsg string
 
 	if !m.Config.Profiles[profile].Mattermost.HideFrom {
 		if len(mail.From[0].PersonalName) < 1 && len(mail.From[0].MailboxName) < 1 && len(mail.From[0].HostName) < 1 {
@@ -121,8 +122,6 @@ func (m Mail2Most) PostMattermost(profile int, mail Mail) error {
 		m.Error("Configuration inconsistency found", map[string]interface{}{"Config.Profile.Mattermost.SubjectOnly": true, "Config.Profile.Mattermost.BodyOnly": true, "error": err})
 		return err
 	}
-
-	shortmsg := msg
 
 	if m.Config.Profiles[profile].Mattermost.SubjectOnly {
 		msg += fmt.Sprintf(
