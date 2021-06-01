@@ -14,9 +14,10 @@ notifications:
   email: false
 
 env:
-  - GO111MODULE="on"
+  - GO111MODULE=on
 
 before_install:
+  - export GO111MODULE=on
   - go get golang.org/x/lint/golint
   - go install github.com/fzipp/gocyclo/cmd/gocyclo@latest
   - go get github.com/gordonklaus/ineffassign
