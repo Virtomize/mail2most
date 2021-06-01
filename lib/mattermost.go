@@ -180,7 +180,13 @@ func (m Mail2Most) PostMattermost(profile int, mail Mail) error {
 
 		var fileIDs []string
 		if m.Config.Profiles[profile].Mattermost.MailAttachments {
-			for _, a := range mail.Attachments {
+			for k, a := range mail.Attachments {
+				// https://github.com/Virtomize/mail2most/issues/62
+				// mattermost only allows up to 5 attachments
+				if k > 4 {
+					m.Error("maximum of 5 attachments reached", map[string]interface{}{"files": len(fileIDs), "attachments": len(mail.Attachments)})
+					break
+				}
 				fileResp, resp := c.UploadFile(a.Content, ch.Id, a.Filename)
 				if resp.Error != nil {
 					m.Error("Mattermost Upload File Error", map[string]interface{}{"error": resp.Error})
