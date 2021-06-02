@@ -2,6 +2,7 @@ package mail2most
 
 import (
 	"crypto/tls"
+	"fmt"
 	"hash/fnv"
 	"strconv"
 	"strings"
@@ -23,7 +24,25 @@ func (m Mail2Most) connect(profile int) (*client.Client, error) {
 		}
 		c, err = client.DialTLS(m.Config.Profiles[profile].Mail.ImapServer, &tlsconf)
 	} else {
-		c, err = client.Dial(m.Config.Profiles[profile].Mail.ImapServer)
+		if m.Config.Profiles[profile].Mail.StartTLS {
+			// cut of port just in case
+			server := strings.Split(m.Config.Profiles[profile].Mail.ImapServer, ":")[0]
+
+			c, err = client.Dial(fmt.Sprintf("%s:143", server))
+			if err != nil {
+				return nil, err
+			}
+
+			tlsconf := &tls.Config{ServerName: m.Config.Profiles[profile].Mail.ImapServer}
+
+			if !m.Config.Profiles[profile].Mail.VerifyTLS {
+				tlsconf.InsecureSkipVerify = true
+			}
+
+			err = c.StartTLS(tlsconf)
+		} else {
+			c, err = client.Dial(m.Config.Profiles[profile].Mail.ImapServer)
+		}
 	}
 	if err != nil {
 		return nil, err
