@@ -276,7 +276,7 @@ func (m Mail2Most) processReader(mr *gomail.Reader, profile int) (string, []Atta
 				}
 
 			} else {
-				m.Debug("InlineHeader Unkown", map[string]interface{}{"type": p.Header.Get("Content-Type")})
+				m.Debug("InlineHeader Unknown", map[string]interface{}{"type": p.Header.Get("Content-Type")})
 			}
 		case *gomail.AttachmentHeader:
 			// This is an attachment
