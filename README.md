@@ -11,10 +11,10 @@ Filter emails from mail accounts and send them to mattermost.
 
 ![mail2most-image](https://user-images.githubusercontent.com/13348918/60437141-ff1b5500-9c0d-11e9-913f-ae7c4a034b10.png)
 
-
 # Features
 
 - IMAP(S) support
+- StartTLS support
 - Mattermost v4 API support
 - HTML 2 Markdown support
 - Filter mails by Folder
@@ -31,6 +31,7 @@ Filter emails from mail accounts and send them to mattermost.
 Missing feature or found a bug ? Feel free to open an [issue](https://github.com/virtomize/mail2most/issues) and let us know !
 
 ## Donation
+
 If this project helps you, feel free to give us a cup of coffee :).
 
 [![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=VBXHBYFU44T5W&source=url)
@@ -48,7 +49,7 @@ Just clone the repo and run `mage build`, you can find the binary under `bin/mai
 
 # Usage
 
-- create a mattermost user 
+- create a mattermost user
 - create or use an existsing email user to connect to your mail server via IMAP
 - edit `conf/mail2most.conf` and configure your mail and mattermost credentials
 - configure your filters
@@ -75,8 +76,8 @@ docker run \
   -v /path/to/mail2most.conf:/mail2most/conf/mail2most.conf \
   virtomize/mail2most:latest
 ```
-e.g. if you are in this repo:
 
+e.g. if you are in this repo:
 
 ```
 docker run \
@@ -94,7 +95,8 @@ Using docker-compose you can just edit the `conf/mail2most.conf` or change the p
     volumes:
       - ./conf/mail2most.conf:/mail2most/conf/mail2most.conf
 ```
-needs to be changed to 
+
+needs to be changed to
 
 ```
     volumes:
