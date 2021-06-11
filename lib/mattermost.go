@@ -87,8 +87,10 @@ func (m Mail2Most) PostMattermost(profile int, mail Mail) error {
 	}
 
 	if len(strings.TrimSpace(body)) < 1 {
-		m.Info("dead body found", map[string]interface{}{"function": "Mail2Most.PostMattermost"})
-		return nil
+		if m.Config.Profiles[profile].Mattermost.SkipEmptyMessages {
+			m.Info("empty message body found", map[string]interface{}{"function": "Mail2Most.PostMattermost"})
+			return nil
+		}
 	}
 
 	if m.Config.Profiles[profile].Mattermost.BodyPrefix != "" {
