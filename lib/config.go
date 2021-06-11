@@ -56,6 +56,7 @@ type mattermost struct {
 	Broadcast                                  []string
 	SubjectOnly                                bool
 	BodyOnly                                   bool
+	SkipEmptyMessages                          bool
 	StripHTML                                  bool
 	ConvertToMarkdown                          bool
 	HideFrom                                   bool
