@@ -34,7 +34,7 @@ func Build() error {
 		return err
 	}
 
-	return sh.RunV("go", "build", "-o", binPath+"/"+binName)
+	return sh.RunV("go", "build", "-a", "-tags", "netgo", "-o", binPath+"/"+binName, "-ldflags", "-w -extldflags \"-static\"")
 }
 
 // CreateRelease - mage build
@@ -66,7 +66,7 @@ func CreateRelease() error {
 				return err
 			}
 
-			err = sh.RunV("go", "build", "-o", path+binName)
+			err = sh.RunV("go", "build", "-a", "-tags", "netgo", "-o", path+binName, "-ldflags", "-w -extldflags \"-static\"")
 			if err != nil {
 				return err
 			}
