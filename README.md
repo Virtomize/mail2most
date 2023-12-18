@@ -55,6 +55,10 @@ Just clone the repo and run `mage build`, you can find the binary under `bin/mai
 - configure your filters
 - run Mail2Most `./mail2most` or with config path `./mail2most -c conf/mail2most.conf`
 
+# Version Info
+
+- run `./mail2most -version` to get current version information
+
 ## example conf - filter descriptions
 
 **just configure the filters you need if a filter is not defined it is not used !**
