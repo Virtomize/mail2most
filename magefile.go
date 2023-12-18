@@ -1,4 +1,5 @@
-//+build mage
+//go:build mage
+// +build mage
 
 package main
 
@@ -34,7 +35,9 @@ func Build() error {
 		return err
 	}
 
-	return sh.RunV("go", "build", "-a", "-tags", "netgo", "-o", binPath+"/"+binName, "-ldflags", "-w -extldflags \"-static\"")
+	tag, _ := exec.Command("bash", "-c", "git tag --sort=-version:refname | head -n 1").Output()
+
+	return sh.RunV("go", "build", "-a", "-tags", "netgo", "-o", binPath+"/"+binName, "-ldflags", "-w -extldflags \"-static\" -X 'main.Version="+string(tag)+"'")
 }
 
 // CreateRelease - mage build
