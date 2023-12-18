@@ -1,18 +1,11 @@
 package mail2most
 
 const (
-	// ERROR .
-	ERROR string = "error"
-	// INFO .
-	INFO string = "info"
-	// DEBUG .
-	DEBUG string = "debug"
-	// LOGSTDOUT .
-	LOGSTDOUT string = "stdout"
-	// LOGFILE .
-	LOGFILE string = "logfile"
-	// LOGFORMATJSON .
+	ERROR         string = "error"
+	INFO          string = "info"
+	DEBUG         string = "debug"
+	LOGSTDOUT     string = "stdout"
+	LOGFILE       string = "logfile"
 	LOGFORMATJSON string = "json"
-	// LOGFORMATTEXT .
 	LOGFORMATTEXT string = "text"
 )
