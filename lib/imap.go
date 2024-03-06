@@ -91,7 +91,7 @@ func (m Mail2Most) GetMail(profile int) ([]Mail, error) {
 			"folder": folder,
 		})
 
-		limit := m.Config.Profiles[profile].Mail.Limit
+		limit := m.Config.Profiles[profile].Mail.Limit - 1
 		seqset := new(imap.SeqSet)
 		if m.Config.Profiles[profile].Filter.Unseen {
 			m.Debug("searching unseen", map[string]interface{}{"unseen": m.Config.Profiles[profile].Filter.Unseen})
