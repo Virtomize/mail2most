@@ -28,6 +28,7 @@ type (
 	Service mg.Namespace
 	Test    mg.Namespace
 	Release mg.Namespace
+	Docker  mg.Namespace
 )
 
 // Run - mage run
@@ -59,7 +60,7 @@ func (t Test) Coverage() error {
 
 // Clean - cleans up the client generation and binarys
 func (t Test) Clean() error {
-	mg.Deps(Release.CleanDocker)
+	mg.Deps(Docker.CleanDocker)
 	fmt.Println("cleaning up")
 	if _, err := os.Stat("coverage.out"); err == nil {
 		err = os.Remove("coverage.out")
@@ -118,10 +119,8 @@ func (Release) All() error {
 	return nil
 }
 
-// Docker - creates docker container
-func (r Release) Docker() error {
-	mg.Deps(r.CleanDocker)
-	mg.Deps(Service.Build)
+// Init - initializes docker build requirements
+func (Docker) Init() error {
 	if err := os.MkdirAll(dockerPath+"/conf", 0755); err != nil {
 		return err
 	}
@@ -134,8 +133,14 @@ func (r Release) Docker() error {
 		return err
 	}
 
-	copyFile(confFile, dockerPath+"/"+confFile, 1000)
+	return copyFile(confFile, dockerPath+"/"+confFile, 1000)
+}
 
+// Docker - creates docker container
+func (d Docker) Docker() error {
+	mg.Deps(d.CleanDocker)
+	mg.Deps(Service.Build)
+	mg.Deps(d.Init)
 	cmd := exec.Command("git", "describe", "--tags")
 	b, err := cmd.CombinedOutput()
 	if err != nil {
@@ -158,8 +163,8 @@ func (r Release) Docker() error {
 	return sh.RunV("docker", "push", registry+":latest")
 }
 
-// CleanDocker - removes docker build files
-func (Release) CleanDocker() error {
+// Clean - removes docker build files
+func (Docker) CleanDocker() error {
 	if _, err := os.Stat(dockerPath); err == nil {
 		err = os.RemoveAll(dockerPath)
 		if err != nil {
