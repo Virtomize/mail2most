@@ -92,6 +92,9 @@ docker run \
   virtomize/mail2most:latest
 ```
 
+> [!NOTE]
+> The `latest` tag image is rebuild on a daily base to get newest OS package updates inside the docker image.
+
 ## docker-compose
 
 [docker-hub link](https://hub.docker.com/r/virtomize/mail2most)
