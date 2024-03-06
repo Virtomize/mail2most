@@ -3,6 +3,7 @@ name: Publish Docker image
 on:
   schedule:
     - cron: "0 0 * * *"
+  workflow_dispatch:
 
 jobs:
   push_to_registry:
