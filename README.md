@@ -3,7 +3,8 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/virtomize/mail2most)](https://goreportcard.com/report/github.com/virtomize/mail2most)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/virtomize/mail2most/blob/master/LICENSE)
 [![Built with Mage](https://magefile.org/badge.svg)](https://magefile.org)
-[![Go](https://github.com/Virtomize/mail2most/actions/workflows/test.yml/badge.svg?branch=master&event=push)](https://github.com/Virtomize/mail2most/actions/workflows/test.yml)
+[![Test Mail2Most](https://github.com/Virtomize/mail2most/actions/workflows/test.yml/badge.svg?branch=master&event=push)](https://github.com/Virtomize/mail2most/actions/workflows/test.yml)
+[![Publish Docker image](https://github.com/Virtomize/mail2most/actions/workflows/docker.yaml/badge.svg?branch=master&event=schedule)](https://github.com/Virtomize/mail2most/actions/workflows/docker.yaml)
 
 # [![Mail2Most](https://user-images.githubusercontent.com/13348918/60418882-560c3480-9be4-11e9-9f30-b0124a162630.png)](https://github.com/virtomize/mail2most)
 
