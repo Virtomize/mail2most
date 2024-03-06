@@ -11,8 +11,7 @@ jobs:
           go-version: '1.22.x'
       - name: Install dependencies
         run: |
-          apt-get update
-          apt-get install -y git
+          sudo apt-get install -y git
           git clone https://github.com/magefile/mage
           cd mage && go run bootstrap.go
           cd ..
