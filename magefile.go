@@ -10,6 +10,7 @@ import (
 	"os/exec"
 	"strings"
 
+	"github.com/magefile/mage/mg"
 	"github.com/magefile/mage/sh"
 	"github.com/mholt/archiver"
 )
@@ -23,34 +24,55 @@ var (
 	registry       = "virtomize/mail2most"
 )
 
+type (
+	Service mg.Namespace
+	Test    mg.Namespace
+	Release mg.Namespace
+)
+
+// Run - mage run
+func (t Service) Run() error {
+	return sh.RunV("go", "run", "main.go")
+}
+
 // Build - mage build
-func Build() error {
-	err := Clean()
-	if err != nil {
-		return err
-	}
-
-	err = Test()
-	if err != nil {
-		return err
-	}
-
+func (t Service) Build() error {
+	mg.Deps(Test.Run)
 	tag, _ := exec.Command("bash", "-c", "git tag --sort=-version:refname | head -n 1").Output()
 
 	return sh.RunV("go", "build", "-a", "-tags", "netgo", "-o", binPath+"/"+binName, "-ldflags", "-w -extldflags \"-static\" -X 'main.Version="+string(tag)+"'")
 }
 
-// CreateRelease - mage build
-func CreateRelease() error {
-	err := Clean()
-	if err != nil {
-		return err
-	}
+// Run - running tests and code coverage
+func (t Test) Run() error {
+	mg.Deps(t.Clean)
+	return sh.RunV("go", "test", "-v", "-cover", "./...", "-coverprofile=coverage.out")
+}
 
-	err = Test()
-	if err != nil {
-		return err
+// Coverage - checking code coverage
+func (t Test) Coverage() error {
+	if _, err := os.Stat("./coverage.out"); err != nil {
+		return fmt.Errorf("run mage test befor checking the code coverage")
 	}
+	return sh.RunV("go", "tool", "cover", "-html=coverage.out")
+}
+
+// Clean - cleans up the client generation and binarys
+func (t Test) Clean() error {
+	mg.Deps(Release.CleanDocker)
+	fmt.Println("cleaning up")
+	if _, err := os.Stat("coverage.out"); err == nil {
+		err = os.Remove("coverage.out")
+		if err != nil {
+			return err
+		}
+	}
+	return os.RemoveAll("bin/")
+}
+
+// All - mage build all releases
+func (Release) All() error {
+	mg.Deps(Test.Run)
 	osarch := make(map[string][]string)
 	osarch["linux"] = []string{"386", "amd64", "arm", "arm64"}
 	osarch["windows"] = []string{"386", "amd64"}
@@ -96,46 +118,10 @@ func CreateRelease() error {
 	return nil
 }
 
-// Test - running tests and code coverage
-func Test() error {
-	return sh.RunV("go", "test", "-v", "-cover", "./...", "-coverprofile=coverage.out")
-}
-
-// Run - mage run
-func Run() error {
-	return sh.RunV("go", "run", "main.go")
-}
-
-// Coverage - checking code coverage
-func Coverage() error {
-	if _, err := os.Stat("./coverage.out"); err != nil {
-		return fmt.Errorf("run mage test befor checking the code coverage")
-	}
-	return sh.RunV("go", "tool", "cover", "-html=coverage.out")
-}
-
-// Clean cleans up the client generation and binarys
-func Clean() error {
-	fmt.Println("cleaning up")
-	if _, err := os.Stat("coverage.out"); err == nil {
-		err = os.Remove("coverage.out")
-		if err != nil {
-			return err
-		}
-	}
-	err := cleanDocker()
-	if err != nil {
-		return err
-	}
-	return os.RemoveAll("bin/")
-}
-
-// Docker creates docker container
-func Docker() error {
-	if err := cleanDocker(); err != nil {
-		return err
-	}
-
+// Docker - creates docker container
+func (r Release) Docker() error {
+	mg.Deps(r.CleanDocker)
+	mg.Deps(Service.Build)
 	if err := os.MkdirAll(dockerPath+"/conf", 0755); err != nil {
 		return err
 	}
@@ -172,7 +158,8 @@ func Docker() error {
 	return sh.RunV("docker", "push", registry+":latest")
 }
 
-func cleanDocker() error {
+// CleanDocker - removes docker build files
+func (Release) CleanDocker() error {
 	if _, err := os.Stat(dockerPath); err == nil {
 		err = os.RemoveAll(dockerPath)
 		if err != nil {

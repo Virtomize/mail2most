@@ -16,5 +16,4 @@ jobs:
           cd mage && go run bootstrap.go
           cd ..
       - name: Test
-        run: mage test
-
+        run: mage test:run
