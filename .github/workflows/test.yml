@@ -1,4 +1,4 @@
-name: Test Mail2Most
+name: Tests
 on: [push]
 jobs:
   build:
