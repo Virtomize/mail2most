@@ -47,5 +47,5 @@ jobs:
           context: docker/
           file: docker/Dockerfile
           push: true
-          tags: 'latest'
+          tags: ${{ secrets.DOCKER_USERNAME }}/mail2most:latest
           labels: ${{ steps.meta.outputs.labels }}
