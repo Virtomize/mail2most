@@ -151,6 +151,9 @@ systemctl enable mail2most
 systemctl start mail2most
 ```
 
+> [!Note]
+> Make sure to use the absolute path to your mail2most configuration file.
+
 ## Common problems
 
 **Problem: mail2most crashes after profile changes**
