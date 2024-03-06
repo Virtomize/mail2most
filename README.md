@@ -133,7 +133,7 @@ Description=mail2most
 [Service]
 Type=simple
 WorkingDirectory=/opt/mail2most
-ExecStart=/opt/mail2most/mail2most -c conf/mail2most.conf
+ExecStart=/opt/mail2most/mail2most -c /path/to/mail2most.conf
 Restart=always
 RestartSec=60
 
