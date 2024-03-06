@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"image"
 	"io"
-	"io/ioutil"
+	"os"
 	"reflect"
 	"strings"
 	"time"
@@ -147,7 +147,7 @@ func writeToFile(data [][]uint32, filename string) error {
 	if err != nil {
 		return err
 	}
-	err = ioutil.WriteFile(filename, file, 0644)
+	err = os.WriteFile(filename, file, 0600)
 	if err != nil {
 		return err
 	}
@@ -223,7 +223,7 @@ func (m Mail2Most) processReader(mr *gomail.Reader, profile int) (string, []Atta
 			if strings.HasPrefix(p.Header.Get("Content-Type"), "text/html") {
 
 				// This is the message's text (can be plain-text or HTML)
-				b, err := ioutil.ReadAll(p.Body)
+				b, err := io.ReadAll(p.Body)
 				if err != nil {
 					continue
 				}
@@ -240,7 +240,7 @@ func (m Mail2Most) processReader(mr *gomail.Reader, profile int) (string, []Atta
 			} else if strings.HasPrefix(p.Header.Get("Content-Type"), "text/plain") {
 				// only parse if no html is found
 				if len(html) < 1 {
-					b, err := ioutil.ReadAll(p.Body)
+					b, err := io.ReadAll(p.Body)
 					if err != nil {
 						m.Error("Read Error", map[string]interface{}{"error": err, "function": "ioutil.ReadAll", "stage": "parse plain text"})
 						continue
@@ -261,9 +261,9 @@ func (m Mail2Most) processReader(mr *gomail.Reader, profile int) (string, []Atta
 			} else if strings.HasPrefix(p.Header.Get("Content-Type"), "image/") {
 				if m.Config.Profiles[profile].Mattermost.MailAttachments {
 
-					b, err := ioutil.ReadAll(p.Body)
+					b, err := io.ReadAll(p.Body)
 					if err != nil {
-						m.Error("Read Error", map[string]interface{}{"error": err, "function": "ioutil.ReadAll", "stage": "parse images"})
+						m.Error("Read Error", map[string]interface{}{"error": err, "function": "io.ReadAll", "stage": "parse images"})
 						continue
 					}
 
@@ -290,10 +290,10 @@ func (m Mail2Most) processReader(mr *gomail.Reader, profile int) (string, []Atta
 					m.Debug("attachments found", map[string]interface{}{"filename": filename})
 				}
 
-				b, err := ioutil.ReadAll(p.Body)
+				b, err := io.ReadAll(p.Body)
 				if err != nil {
 					// Skip this attachment and hope things aren't boned.
-					m.Error("ioutil returned an error", map[string]interface{}{"error": err})
+					m.Error("io returned an error", map[string]interface{}{"error": err})
 					continue
 				}
 

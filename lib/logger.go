@@ -43,7 +43,7 @@ func (m *Mail2Most) initLogger() error {
 
 	switch m.Config.Logging.Output {
 	case LOGFILE:
-		logfile, err := os.OpenFile(m.Config.Logging.Logfile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+		logfile, err := os.OpenFile(m.Config.Logging.Logfile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0600)
 		if err != nil {
 			m.Logger.WithFields(log.Fields{
 				"filepath": m.Config.Logging.Logfile,

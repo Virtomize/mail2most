@@ -19,6 +19,7 @@ func (m Mail2Most) connect(profile int) (*client.Client, error) {
 	if m.Config.Profiles[profile].Mail.ImapTLS {
 		var tlsconf tls.Config
 
+		//#nosec
 		if !m.Config.Profiles[profile].Mail.VerifyTLS {
 			tlsconf.InsecureSkipVerify = true
 		}
@@ -33,7 +34,7 @@ func (m Mail2Most) connect(profile int) (*client.Client, error) {
 				return nil, err
 			}
 
-			tlsconf := &tls.Config{ServerName: m.Config.Profiles[profile].Mail.ImapServer}
+			tlsconf := &tls.Config{ServerName: m.Config.Profiles[profile].Mail.ImapServer, MinVersion: tls.VersionTLS12}
 
 			if !m.Config.Profiles[profile].Mail.VerifyTLS {
 				tlsconf.InsecureSkipVerify = true
@@ -68,7 +69,9 @@ func (m Mail2Most) GetMail(profile int) ([]Mail, error) {
 	if err != nil {
 		return []Mail{}, err
 	}
-	defer c.Logout()
+	defer func() {
+		_ = c.Logout()
+	}()
 
 	// Select Folder
 	folders := []string{"INBOX"}
@@ -154,7 +157,11 @@ func (m Mail2Most) GetMail(profile int) ([]Mail, error) {
 				h.Reset()
 				// since we make this profile specific changing the profile order will break this
 				// but using the profile will prevent having dublicated uid between profiles with the same mailbox
-				h.Write([]byte(msg.Envelope.MessageId + "/profile/" + strconv.Itoa(profile)))
+				_, err := h.Write([]byte(msg.Envelope.MessageId + "/profile/" + strconv.Itoa(profile)))
+				if err != nil {
+					m.Error("uuid generation error", map[string]interface{}{"Error": err, "function": "h.Write"})
+				}
+
 				msg.Uid = h.Sum32()
 			}
 			m.Debug("processing message", map[string]interface{}{"uid": msg.Uid, "subject": msg.Envelope.Subject})
@@ -227,7 +234,9 @@ func (m Mail2Most) ListMailBoxes(profile int) ([]string, error) {
 	if err != nil {
 		return []string{}, err
 	}
-	defer c.Logout()
+	defer func() {
+		_ = c.Logout()
+	}()
 
 	// List mailboxes
 	mailboxes := make(chan *imap.MailboxInfo, 10)
@@ -255,7 +264,9 @@ func (m Mail2Most) ListFlags(profile int) ([]string, error) {
 	if err != nil {
 		return []string{}, err
 	}
-	defer c.Logout()
+	defer func() {
+		_ = c.Logout()
+	}()
 
 	// Select Folder
 	folders := []string{"INBOX"}

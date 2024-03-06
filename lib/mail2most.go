@@ -2,7 +2,7 @@ package mail2most
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"os"
 	"time"
 )
@@ -17,7 +17,7 @@ func (m Mail2Most) Run() error {
 			return err
 		}
 
-		bv, err := ioutil.ReadAll(jsonFile)
+		bv, err := io.ReadAll(jsonFile)
 		if err != nil {
 			return err
 		}
