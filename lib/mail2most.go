@@ -90,9 +90,10 @@ func (m Mail2Most) Run() error {
 					}
 					err = writeToFile(alreadySend, m.Config.General.File)
 					if err != nil {
-						return err
+						m.Error("File Error", map[string]interface{}{
+							"Error": err,
+						})
 					}
-
 				}
 			}
 		}
