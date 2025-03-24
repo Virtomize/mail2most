@@ -14,12 +14,14 @@ import (
 
 func (m Mail2Most) mlogin(profile int) (*model.Client4, error) {
 	c := model.NewAPIv4Client(m.Config.Profiles[profile].Mattermost.URL)
-
+	m.Info("in mlogin", nil)
 	if m.Config.Profiles[profile].Mattermost.Username != "" && m.Config.Profiles[profile].Mattermost.Password != "" {
-		_, resp := c.Login(m.Config.Profiles[profile].Mattermost.Username, m.Config.Profiles[profile].Mattermost.Password)
+		me, resp := c.Login(m.Config.Profiles[profile].Mattermost.Username, m.Config.Profiles[profile].Mattermost.Password)
 		if resp.Error != nil {
 			return nil, resp.Error
 		}
+		m.Config.Profiles[profile].Mattermost.UserId = me.Id
+		
 	} else if m.Config.Profiles[profile].Mattermost.AccessToken != "" {
 		c.AuthToken = m.Config.Profiles[profile].Mattermost.AccessToken
 		c.AuthType = "BEARER"
@@ -28,7 +30,9 @@ func (m Mail2Most) mlogin(profile int) (*model.Client4, error) {
 			return nil, err
 		}
 		u := model.UserFromJson(r.Body)
+		
 		m.Config.Profiles[profile].Mattermost.Username = u.Email
+		m.Config.Profiles[profile].Mattermost.UserId = u.Id
 	} else {
 		return nil, fmt.Errorf("no username, password or token is set")
 	}
@@ -59,6 +63,7 @@ func (m Mail2Most) PostMattermost(profile int, mail Mail) error {
 	if err != nil {
 		return err
 	}
+	
 	defer c.Logout()
 
 	// check if body is base64 encoded
@@ -112,13 +117,13 @@ func (m Mail2Most) PostMattermost(profile int, mail Mail) error {
 		email := fmt.Sprintf("%s@%s", mail.From[0].MailboxName, mail.From[0].HostName)
 		user, resp := c.GetUserByEmail(email, "")
 		if resp.Error != nil {
-			m.Debug("user not found in system", map[string]interface{}{"error": resp.Error})
+			m.Debug("user not found in system for email " + email, map[string]interface{}{"error": resp.Error})
 			msg += m.getFromLine(profile, mail.From[0].PersonalName, email)
 		} else {
 			msg += m.getFromLine(profile, "@"+user.Username, email)
 		}
 	}
-
+	//m.Debug("Before SubjectOnly/BodyOnly " + err.Error,nil)
 	if m.Config.Profiles[profile].Mattermost.SubjectOnly && m.Config.Profiles[profile].Mattermost.BodyOnly {
 		err := fmt.Errorf("config defines SubjectOnly and BodyOnly to be true which exclude each other")
 		m.Error("Configuration inconsistency found", map[string]interface{}{"Config.Profile.Mattermost.SubjectOnly": true, "Config.Profile.Mattermost.BodyOnly": true, "error": err})
@@ -190,33 +195,24 @@ func (m Mail2Most) PostMattermost(profile int, mail Mail) error {
 			return err
 		}
 	}
-
+	m.Debug("In PostMattermost, Before m.Config.Profiles[profile].Mattermost.Users treatment",nil)
 	if len(m.Config.Profiles[profile].Mattermost.Users) > 0 {
 
 		var (
-			me   *model.User
 			resp *model.Response
 		)
 
-		// who am i
-		// user is defined by its email address
-		if strings.Contains(m.Config.Profiles[profile].Mattermost.Username, "@") {
-			me, resp = c.GetUserByEmail(m.Config.Profiles[profile].Mattermost.Username, "")
-			if resp.Error != nil {
-				return resp.Error
-			}
-		} else {
-			me, resp = c.GetUserByEmail(m.Config.Profiles[profile].Mattermost.Username, "")
-			if resp.Error != nil {
-				return resp.Error
-			}
-		}
-		myid := me.Id
+		myid := m.Config.Profiles[profile].Mattermost.UserId
 
 		for _, user := range m.Config.Profiles[profile].Mattermost.Users {
 			var (
 				u *model.User
 			)
+			m.Debug("In PostMattermost, In m.Config.Profiles[profile].Mattermost.Users treatment ", map[string]interface{}{"length of user name": len(user)})
+						
+			if len(user) == 0 {
+				return errors.New("User to send message to in Mattermost seems to be empty")
+			}
 			// user is defined by its email address
 			if strings.Contains(user, "@") {
 				u, resp = c.GetUserByEmail(user, "")

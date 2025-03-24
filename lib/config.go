@@ -50,7 +50,7 @@ type filter struct {
 }
 
 type mattermost struct {
-	URL, Team, Username, Password, AccessToken string
+	URL, Team, Username, Password, AccessToken, UserId string
 	Channels                                   []string
 	Users                                      []string
 	Broadcast                                  []string
