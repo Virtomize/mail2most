@@ -82,17 +82,19 @@ func (m Mail2Most) Run() error {
 				if send {
 					err := m.PostMattermost(p, mail)
 					if err != nil {
-						m.Error("Mattermost Error", map[string]interface{}{
+						m.Error("Right after PostMattermost, Mattermost Error. Email not set as synced in mattermost.", map[string]interface{}{
 							"Error": err,
 						})
 					} else {
 						alreadySend[p] = append(alreadySend[p], mail.ID)
-					}
-					err = writeToFile(alreadySend, m.Config.General.File)
-					if err != nil {
-						m.Error("File Error", map[string]interface{}{
-							"Error": err,
-						})
+						m.Debug("In mail2most Run, Before writeToFile on " + m.Config.General.File,nil)
+						err = writeToFile(alreadySend, m.Config.General.File)
+											
+						if err != nil {
+							m.Error("File Error", map[string]interface{}{
+								"Error": err,
+							})
+						}
 					}
 				}
 			}
