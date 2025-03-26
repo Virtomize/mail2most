@@ -48,7 +48,7 @@ Download [Latest Release Version](https://github.com/virtomize/mail2most/release
 ## build it yourself
 
 You can compile the project yourself using this repo and [mage](https://magefile.org).
-Just clone the repo and run `mage build`, you can find the binary under `bin/mail2most`
+Just clone the repo and run `mage service:build`, you can find the binary under `bin/mail2most`
 
 # Usage
 
