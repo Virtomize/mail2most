@@ -103,6 +103,7 @@ func (m Mail2Most) PostMattermost(profile int, mail Mail) error {
 
 	msg := ":email: "
 	var shortmsg string
+	var fromDecorated string
 
 	if !m.Config.Profiles[profile].Mattermost.HideFrom {
 		if len(mail.From[0].PersonalName) < 1 && len(mail.From[0].MailboxName) < 1 && len(mail.From[0].HostName) < 1 {
@@ -113,9 +114,11 @@ func (m Mail2Most) PostMattermost(profile int, mail Mail) error {
 		user, resp := c.GetUserByEmail(email, "")
 		if resp.Error != nil {
 			m.Debug("user not found in system", map[string]interface{}{"error": resp.Error})
-			msg += m.getFromLine(profile, mail.From[0].PersonalName, email)
+			fromDecorated = m.getFromLine(profile, mail.From[0].PersonalName, email)
+			msg += fromDecorated
 		} else {
-			msg += m.getFromLine(profile, "@"+user.Username, email)
+			fromDecorated = m.getFromLine(profile, "@"+user.Username, email)
+			msg += fromDecorated
 		}
 	}
 
@@ -185,7 +188,39 @@ func (m Mail2Most) PostMattermost(profile int, mail Mail) error {
 
 		fileIDs := m.sendAttachments(c, ch.Id, profile, mail)
 
-		err = m.postMsgs(c, fileIDs, ch.Id, msg, shortmsg, fallback, mail)
+		// If configured, post subject as head and body as first thread reply
+		if m.Config.Profiles[profile].Mattermost.BodyAsThreadReply &&
+			!m.Config.Profiles[profile].Mattermost.SubjectOnly &&
+			!m.Config.Profiles[profile].Mattermost.BodyOnly {
+
+			// Build head message: from + quoted subject, apply broadcasts
+			head := ":email: "
+			if !m.Config.Profiles[profile].Mattermost.HideFrom {
+				head += fromDecorated
+			}
+			head += fmt.Sprintf("\n%s", mail.Subject)
+			for _, b := range m.Config.Profiles[profile].Mattermost.Broadcast {
+				head = b + " " + head
+			}
+			if len(head) > 16383 {
+				head = head[0:16382]
+			}
+
+			// Build body-only message with formatting
+			var bodyOnlyMsg string
+			if m.Config.Profiles[profile].Mattermost.ConvertToMarkdown {
+				bodyOnlyMsg = body
+			} else {
+				bodyOnlyMsg = fmt.Sprintf("```\n%s```\n", body)
+			}
+			if len(bodyOnlyMsg) > 16383 {
+				bodyOnlyMsg = bodyOnlyMsg[0:16382]
+			}
+
+			err = m.postThreadedMsgs(c, fileIDs, ch.Id, head, bodyOnlyMsg, fallback, mail)
+		} else {
+			err = m.postMsgs(c, fileIDs, ch.Id, msg, shortmsg, fallback, mail)
+		}
 		if err != nil {
 			return err
 		}
@@ -313,5 +348,54 @@ func (m Mail2Most) postMsgs(c *model.Client4, fileIDs map[int][]string, chID, ms
 			}
 		}
 	}
+	return nil
+}
+
+func (m Mail2Most) postThreadedMsgs(c *model.Client4, fileIDs map[int][]string, chID, head, bodyMsg, fallback string, mail Mail) error {
+
+	// Create head/root post
+	headPost := &model.Post{ChannelId: chID, Message: head}
+	m.Debug("mattermost post (thread head)", map[string]interface{}{"channel": chID, "subject": mail.Subject, "bytes": len(headPost.Message)})
+	created, resp := c.CreatePost(headPost)
+	if resp.Error != nil {
+		m.Error("Mattermost Post Error", map[string]interface{}{"error": resp.Error, "status": "fallback send only subject"})
+		post := &model.Post{ChannelId: chID, Message: fallback}
+		_, resp = c.CreatePost(post)
+		if resp.Error != nil {
+			m.Error("Mattermost Post Error", map[string]interface{}{"error": resp.Error, "status": "fallback not working"})
+			return resp.Error
+		}
+		return nil
+	}
+
+	// Create body as first reply (and attach files). Mattermost allows multiple posts with same RootId.
+	if len(fileIDs) > 0 {
+		for k, files := range fileIDs {
+			replyMsg := bodyMsg
+			if k > 0 {
+				// For additional attachment batches, avoid repeating the body text
+				replyMsg = ""
+			}
+			post := &model.Post{ChannelId: chID, Message: replyMsg, RootId: created.Id}
+			if len(files) > 0 {
+				post.FileIds = files
+			}
+			m.Debug("mattermost post (thread reply)", map[string]interface{}{"channel": chID, "subject": mail.Subject, "bytes": len(post.Message)})
+			_, resp := c.CreatePost(post)
+			if resp.Error != nil {
+				m.Error("Mattermost Post Error", map[string]interface{}{"error": resp.Error, "status": "thread reply failed"})
+				return resp.Error
+			}
+		}
+	} else {
+		post := &model.Post{ChannelId: chID, Message: bodyMsg, RootId: created.Id}
+		m.Debug("mattermost post (thread reply)", map[string]interface{}{"channel": chID, "subject": mail.Subject, "bytes": len(post.Message)})
+		_, resp := c.CreatePost(post)
+		if resp.Error != nil {
+			m.Error("Mattermost Post Error", map[string]interface{}{"error": resp.Error, "status": "thread reply failed"})
+			return resp.Error
+		}
+	}
+
 	return nil
 }

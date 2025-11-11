@@ -27,6 +27,7 @@ Filter emails from mail accounts and send them to mattermost.
 - Filter mails by TimeRange
 - Mattermost broadcasts
 - Choose to post Subject and Body or Subject only
+- Option to post mail body as a thread reply under the subject
 - Send to channels and/or users
 - Profile management including default profiles
 - Mail attachment support
